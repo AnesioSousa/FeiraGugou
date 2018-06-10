@@ -12,10 +12,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-
+import Util.ManipuladorDeArquivos;
 /**
  *
- * @author anesio
+ * @author Anésio
  */
 public class NewFXMain extends Application {
     
@@ -27,14 +27,15 @@ public class NewFXMain extends Application {
     }
     
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage){
         Button btn = new Button();
-        btn.setText("Say 'Hello World'");
+        btn.setText("Ler Arquivo!");
         btn.setOnAction(new EventHandler<ActionEvent>() {
             
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Hello World!");
+                ManipuladorDeArquivos man = new ManipuladorDeArquivos();
+                man.leitor("/home/anesio/Área de Trabalho/Problema 3/FeiraGugou/repo/");
             }
         });
         
