@@ -1,4 +1,4 @@
-package Util;
+package util;
 
 import java.io.*;
 import java.util.Scanner;
@@ -10,25 +10,26 @@ import java.io.FileWriter;
  */
 public class ManipuladorDeArquivos{
     /**
-     * Método que faz as leituras de um arquivo de texto.
+     * Método que faz as leituras dos arquivos de texto de um determinado caminho no sistema.
      * @param local - diretório dos arquivos de texto.
+     * @return 
      */
-    public void leitor(String local){
+    public File[] leitor(String local){
+        File[] arquivos = null;
         try{
-            File[] arquivos;
             File diretorio = new File (local);
             arquivos = diretorio.listFiles();
             
             for(int i = 0; i < arquivos.length; i++){
                 Scanner input = new Scanner(arquivos[i]);
-                while(input.hasNext()){
-                    System.out.println(input.nextLine());
-                }
+                
                 input.close();
             }           
         }catch(FileNotFoundException e){
             System.out.println(e);
-        }    
+        }
+        
+        return arquivos;
     }
     /*
     public void leitor(String local){
