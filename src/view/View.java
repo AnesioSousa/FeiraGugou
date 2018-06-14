@@ -30,8 +30,12 @@ public class View extends Application{
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Button btn = new Button("Abrir");
         
+        Button btn = new Button("Abrir");
+        //1 - Fazer verificação perguntando ao usuário se o diretório selecionado está correto.
+        //2 - Fazer opção de mudar o diretório
+        //3 - Criar um arquivo de texto (se possível com o serializable) contendo a informação de se o usuário
+        //já tem um diretório cadastrado.
         btn.setOnAction((ActionEvent e) -> {
             DirectoryChooser abrirDir = new DirectoryChooser();
             abrirDir.setInitialDirectory(new File(System.getProperty("user.home")));
