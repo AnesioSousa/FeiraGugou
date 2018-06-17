@@ -9,13 +9,13 @@ public class TreeApp {
         tree.inserir(palavras[0]);
         System.out.println(tree.getRaiz());
         tree.inserir(palavras[1]);
-        System.out.println(tree.getRaiz().getFilhoDaEsquerda());
+        System.out.println(tree.getRaiz().getEsquerda());
         tree.inserir(palavras[2]);
-        System.out.println(tree.getRaiz().getFilhoDaDireita());
+        System.out.println(tree.getRaiz().getDireita());
         
         
         System.out.println(tree.getRaiz());
-        System.out.println(tree.getRaiz().getFilhoDaEsquerda());
+        System.out.println(tree.getRaiz().getEsquerda());
         Node found = tree.encontrar("anesio"); 
         
         //theTree.emOrdem(theTree.getRaiz());
