@@ -7,7 +7,7 @@ package util;
  *
  * @author Anésio
  */
-public class BinaryTree {
+public class BinaryTreeJoao {
     private Node root;
     private int size;
     
@@ -158,8 +158,8 @@ public class BinaryTree {
      * @param e 
      */
     public void remove(Element e){}
-    public int size(){}
+    /*public int size(){}
     public int height (Element e){}
     public Iterator iterator(){} 
-    
+    */
 }
