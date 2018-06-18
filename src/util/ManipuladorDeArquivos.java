@@ -3,31 +3,37 @@ package util;
 import java.io.*;
 import java.util.Scanner;
 import java.io.FileWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Anésio
  */
 public class ManipuladorDeArquivos{
-    /**
-     * Método que faz as leituras dos arquivos de texto de um determinado caminho no sistema.
-     * @param local - diretório dos arquivos de texto.
-     * @return 
-     */
-    public File[] leitor(String local){
+    public static void main(String[] args) {
+        leitor();
+    }
+
+    public static File[] leitor(){
         File[] arquivos = null;
         try{
-            File diretorio = new File (local);
+            String dirPadrao = new File ("repo").getCanonicalPath();
+            File diretorio = new File(dirPadrao);
             arquivos = diretorio.listFiles();
             
-            for(int i = 0; i < arquivos.length; i++){
-                Scanner input = new Scanner(arquivos[i]);
-                
+            for (File arquivo : arquivos) {
+                Scanner input = new Scanner(arquivo);
                 input.close();
-            }           
-        }catch(FileNotFoundException e){
-            System.out.println(e);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ManipuladorDeArquivos.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        for (File arquivo : arquivos) {
+            System.out.println(arquivo.getName());
+        }
+        
         
         return arquivos;
     }

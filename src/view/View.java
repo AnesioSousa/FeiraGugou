@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import util.ManipuladorDeArquivos;
 
 /**
  *
@@ -37,6 +38,7 @@ public class View extends Application{
         //3 - Criar um arquivo de texto (se possível com o serializable) contendo a informação de se o usuário
         //já tem um diretório cadastrado.
         btn.setOnAction((ActionEvent e) -> {
+            ManipuladorDeArquivos man = new ManipuladorDeArquivos();
             DirectoryChooser abrirDir = new DirectoryChooser();
             abrirDir.setInitialDirectory(new File(System.getProperty("user.home")));
             abrirDir.setTitle("Escolha o diretório:");
