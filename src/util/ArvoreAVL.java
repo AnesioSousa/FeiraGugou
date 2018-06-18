@@ -102,7 +102,7 @@ public class ArvoreAVL {
             } else if (node.getDireita() == null) { // se ele so tiver filho a esquerda
                 return node.getEsquerda();
             } else {  // se ele tiver ambos os filhos
-                String valorDoSucessor = encontrarValorMin(node.getEsquerda());
+                String valorDoSucessor = encontrarValorMax(node.getEsquerda());
                 node.setDado(valorDoSucessor);
                 node.setEsquerda(remover(node.getEsquerda(), valorDoSucessor));
             }
@@ -179,7 +179,7 @@ public class ArvoreAVL {
     }
 
     private Node rotacaoEsquerdaEsquerda(Node node) {
-        return rotacaoDireitaDireita(node);
+        return rotacaoDireita(node);
     }
 
     private Node rotacaoEsquerdaDireita(Node node) {
@@ -218,9 +218,9 @@ public class ArvoreAVL {
         return novoPai;
     }
 
-    private String encontrarValorMin(Node node) {
-        while (node.getEsquerda() != null) {
-            node = node.getEsquerda();
+    private String encontrarValorMax(Node node) {
+        while (node.getDireita()!= null) {
+            node = node.getDireita();
         }
 
         return node.getDado();
