@@ -11,7 +11,7 @@ public class ArvoreAVL {
 
     private Node raiz;
     private int tam = 0;
-
+    
     public class Node {
         String dado;
         int altura;
