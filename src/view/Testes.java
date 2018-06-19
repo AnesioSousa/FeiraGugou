@@ -2,7 +2,9 @@ package view;
 
 //import controller.Controlador;
 import controller.Controlador;
+import java.util.Iterator;
 import java.util.Scanner;
+import model.Pagina;
 
 /**
  *
@@ -17,7 +19,11 @@ class Testes {
             System.out.printf("Digite a palavra: ");
             String palavra = input.nextLine();
 
-            man.pesquisar(palavra);
+            Iterator itr = man.pesquisar(palavra);
+            
+            while(itr.hasNext()){
+                Pagina p = (Pagina) itr.next();
+            }
             
             if(palavra.equals("exit")){
                 return;
