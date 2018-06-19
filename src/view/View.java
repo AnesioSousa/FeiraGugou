@@ -1,14 +1,17 @@
 package view;
 
-import java.io.File;
+import controller.Controlador;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
-import javafx.stage.DirectoryChooser;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import util.ManipuladorDeArquivos;
 
 /**
  *
@@ -33,23 +36,21 @@ public class View extends Application{
     public void start(Stage primaryStage) throws Exception {
         
         Button btn = new Button("Abrir");
-        //1 - Fazer verificação perguntando ao usuário se o diretório selecionado está correto.
-        //2 - Fazer opção de mudar o diretório
-        //3 - Criar um arquivo de texto (se possível com o serializable) contendo a informação de se o usuário
-        //já tem um diretório cadastrado.
         btn.setOnAction((ActionEvent e) -> {
-            ManipuladorDeArquivos man = new ManipuladorDeArquivos();
-            DirectoryChooser abrirDir = new DirectoryChooser();
-            abrirDir.setInitialDirectory(new File(System.getProperty("user.home")));
-            abrirDir.setTitle("Escolha o diretório:");
+            Controlador man = new Controlador();
             
-            File dirEscolhido = abrirDir.showDialog(null);
-            String caminho = dirEscolhido.getAbsolutePath();
         });
+        TextField campo = new TextField();
+        campo.setAlignment(Pos.CENTER);
+        VBox caixaVertical = new VBox(); 
+        caixaVertical.setSpacing(5); 
+        caixaVertical.setAlignment(Pos.CENTER); 
         
-        StackPane layout = new StackPane();
-        layout.getChildren().addAll(btn);
-        Scene cena = new Scene(layout,200, 100); 
+        //caixaVertical.setTranslateX(10);
+        //caixaVertical.setTranslateY(20);
+        caixaVertical.getChildren().addAll(campo, btn);
+        
+        Scene cena = new Scene(caixaVertical,300, 300); 
         
         primaryStage.setTitle("Atenção!");
         primaryStage.setScene(cena);

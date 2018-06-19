@@ -3,19 +3,14 @@ package util;
 import java.io.*;
 import java.util.Scanner;
 import java.io.FileWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Anésio
  */
 public class ManipuladorDeArquivos{
-    public static void main(String[] args) {
-        leitor();
-    }
 
-    public static File[] leitor(){
+    public File[] pegarArquivosNoDir(){
         File[] arquivos = null;
         try{
             String dirPadrao = new File ("repo").getCanonicalPath();
@@ -27,18 +22,13 @@ public class ManipuladorDeArquivos{
                 input.close();
             }
         } catch (IOException ex) {
-            Logger.getLogger(ManipuladorDeArquivos.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex);
         }
-        
-        for (File arquivo : arquivos) {
-            System.out.println(arquivo.getName());
-        }
-        
         
         return arquivos;
     }
     /*
-    public void leitor(String local){
+    public void pegarArquivosNoDir(String local){
         try{
             BufferedReader leituraBuff = new BufferedReader(new FileReader(local));
             String linha = "";
