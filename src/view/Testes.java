@@ -1,21 +1,29 @@
 package view;
 
+//import controller.Controlador;
 import controller.Controlador;
 import java.util.Scanner;
+
 /**
  *
  * @author Anésio
  */
-public class Testes {
-    private static Controlador man = new Controlador();
-    
+class Testes {        
     public static void main(String[] args) {
+        Controlador man = new Controlador();
         Scanner input = new Scanner(System.in);
-                
-        System.out.printf("Digite a palavra:");
-        System.out.println();
-        String palavra = input.nextLine();
         
-        man.pesquisar(palavra);
+        while(true){
+            System.out.printf("Digite a palavra: ");
+            String palavra = input.nextLine();
+
+            man.pesquisar(palavra);
+            
+            if(palavra.equals("exit")){
+                return;
+            }
+        }
+        
+
     }
 }

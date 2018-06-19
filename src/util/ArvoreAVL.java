@@ -3,6 +3,8 @@
  */
 package util;
 
+import model.Palavra;
+
 /**
  *
  * @author Anésio
@@ -13,15 +15,15 @@ public class ArvoreAVL {
     private int tam = 0;
     
     public class Node {
-        String dado;
+        Palavra dado;
         int altura;
         int fator;
         Node esquerda;
         Node direita;
 
-        public Node(String data){dado = data; altura = 1;}
-        public String getDado() {return dado;}
-        public void setDado(String dado) {this.dado = dado;}
+        public Node(String data){dado = new Palavra(data);altura = 1;}
+        public Palavra getDado() {return dado;}
+        public void setDado(String dado) {this.dado.setPalavraChave(dado);}
         public int getAltura() {return altura;}
         public void setAltura(int altura) {this.altura = altura;}
         public int getFator() { return fator;}
@@ -33,7 +35,7 @@ public class ArvoreAVL {
 
         @Override
         public String toString() {
-            return "Node{" + "Dado=" + dado + '}';
+            return dado.toString();
         }
         
     }
@@ -54,7 +56,7 @@ public class ArvoreAVL {
         if (node == null) {
             return new Node(chave); // Caso base
         }
-        int resultado = chave.compareTo(node.getDado());
+        int resultado = chave.compareToIgnoreCase(node.getDado().getPalavraChave());
 
         if (resultado < 0) {  // Vai pra esquerda?
             node.setEsquerda(inserir(node.getEsquerda(), chave));
@@ -90,7 +92,7 @@ public class ArvoreAVL {
             return null;
         }
 
-        int resultado = chave.compareTo(node.getDado());
+        int resultado = chave.compareToIgnoreCase(node.getDado().getPalavraChave());
 
         if (resultado < 0) { // então quer dizer que o valor que procuramos está do lado esquerdo
             node.setEsquerda(remover(node.getEsquerda(), chave));
@@ -127,7 +129,7 @@ public class ArvoreAVL {
         if (node == null) {
             return false; // Caso base
         }
-        int comparacao = chave.compareTo(node.dado);
+        int comparacao = chave.compareToIgnoreCase(node.getDado().getPalavraChave());
         if (comparacao < 0) {
             return contains(node.getEsquerda(), chave);
         }
@@ -223,7 +225,7 @@ public class ArvoreAVL {
             node = node.getDireita();
         }
 
-        return node.getDado();
+        return node.getDado().getPalavraChave();
     }
     
     public int altura() {
@@ -232,7 +234,22 @@ public class ArvoreAVL {
         }
         return raiz.getAltura();
     }
-
+    
+    // <<<<<<<<<<<<<< REVER ISSO!!! TENTAR DEIXAR RECURSIVO >>>>>>>>>>>>>>>>>>>
+    public Node encontrar(String chave) {  
+        Node atual = raiz;
+        while(atual != null){
+            if(chave.compareTo(atual.getDado().getPalavraChave()) < 0){
+                atual = atual.getEsquerda();
+            }
+            else if(chave.compareTo(atual.getDado().getPalavraChave()) > 0){
+                atual = atual.getDireita();
+            }else
+                return atual;
+        }
+        return null;
+    }
+    
     public int tamanho() {
         return tam;
     }
