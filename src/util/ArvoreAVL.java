@@ -213,10 +213,10 @@ public class ArvoreAVL {
     public Node encontrar(String chave) {  
         Node atual = raiz;
         while(atual != null){
-            if(chave.compareTo(atual.getDado()) < 0){
+            if(chave.compareToIgnoreCase(atual.getDado()) < 0){
                 atual = atual.getEsquerda();
             }
-            else if(chave.compareTo(atual.getDado()) > 0){
+            else if(chave.compareToIgnoreCase(atual.getDado()) > 0){
                 atual = atual.getDireita();
             }else
                 return atual;
