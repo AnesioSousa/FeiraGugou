@@ -8,16 +8,15 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 import model.*;
 import util.*;
-import util.ArvoreAVL.Node;
 
 /**
  *
  * @author Anésio
  */
 public class Controlador {
-    private ArrayList<Pagina> paginas = new ArrayList<>();
+    private ArrayList<Pagina> todasPaginas = new ArrayList<>();    // Já esse atributo é somente utilizado para salvar os nomes dos arquivos, pq não botar uma lista de strings?
     private Arquivos man = new Arquivos();
-    private ArvoreAVL tree = new ArvoreAVL();
+    public ArvoreAVL tree = new ArvoreAVL();
     
     // <<<<<<<<<<<<<<<<CODIGO MUITO PARECIDO DE atribuirPaginas E getArquivo, RESOLVER ISSO !!!!>>>>>>>>>>>
     // <<<<<<<<<<<<<<<<ONDE IREI CHAMAR ESSE MÉTODO? ELE PRECISA SER INICIADO LOGO QUE A CLASSE É INICIADA >>>>>>>>>>
@@ -29,35 +28,27 @@ public class Controlador {
             Pagina pag = new Pagina();
             int pos = arquivo.getName().indexOf(".");
             pag.setTitulo(arquivo.getName().substring(0, pos)); 
-            paginas.add(pag);
+            todasPaginas.add(pag);
         }
     }
-    // <<<<<<<<<<<<<< COM CERTEZA VERIFICAR ESTA MERDA >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.
+    // SE A PALAVRA NÃO ESTIVER NA ÁRVORE ELE VAI INSERIR, ATUALIZAR OS DADOS E RETORNAR O ITERADOR. SE JÁ ESTIVER, ELE SIMPLESMENTE RETORNA O ITERADOR;
     public Iterator pesquisar(String palavra){
-        // Se não estiver na árvore;
-        if(pesquisarEmArvore(palavra) == false){ // !pesquisarEmArvore(palavra)
-            Palavra nova = new Palavra(palavra);
-            pesquisarEmArquivos(nova);
-            tree.inserir(nova.getPalavraChave());
+        Node ret = tree.encontrar(palavra);
+        
+        if(ret == null){ 
+            tree.inserir(palavra);
+            ret = tree.encontrar(palavra);  // tentar tirar isso depois
+            ret = atualizarDados(ret);
         }
-        Node ret = tree.encontrar(palavra);
-        return ret.getDado().iteradorDados();
-        // return o iterador (ou alguma outra forma de percorrer) da lista de titulos pertencente ao objeto Palavra que contém essa palavra chave pesquisada.
-    }
-    
-    private boolean pesquisarEmArvore(String palavra){
-        Node ret = tree.encontrar(palavra);
-        
-        if(ret != null)
-            return true;
-        
-        return false;
+        ret.incrementVezesBuscada();
+
+        return ret.listarPaginas();
     }
      
-    // acha que fica bom mudar o nome para "atualizarPalavra" ou algo assim?
-    private void pesquisarEmArquivos(Palavra palavra){  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;
-        int cont = 0;
-        for (Pagina pagina : paginas) {
+    private Node atualizarDados(Node node){  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;
+        Iterator itr = null;
+        for (Pagina pagina : todasPaginas) {
+            int cont = 0;
             File arquivo = getArquivo(pagina.getTitulo());
             try{
                 Scanner input = new Scanner(arquivo);
@@ -69,7 +60,7 @@ public class Controlador {
                     while(tkn.hasMoreTokens()){
                         String cmp = tkn.nextToken();
                         
-                        if(cmp.equalsIgnoreCase(palavra.getPalavraChave())){
+                        if(cmp.equalsIgnoreCase(node.getDado())){
                             cont++;
                         }
 
@@ -77,13 +68,22 @@ public class Controlador {
                     }
                     //System.out.println();
                 }
-                palavra.adicionarPagina(pagina.getTitulo(), cont);
-                System.out.println(cont);
+                if(cont != 0){ // Se tiver pelo menos 1 ocorrência da palavra no arquivo txt
+                    ArrayList<Pagina> a = node.getPaginas();
+                    
+                    pagina.setOcorrencias(cont);
+                    a.add(pagina);
+                    pagina.setOcorrencias(0);
+                    
+                    /*System.out.println(pagina);
+                    System.out.println(cont);*/
+                }
                 input.close();
             }catch(FileNotFoundException ex) {
                 System.out.println(ex);
             }
         }
+        return node;
     }
     
     // ESSE MÉTODO FUTURAMENTE VAI SER MAIS ÚTIL DO QUE O MÉTODO "atribuirPaginas"

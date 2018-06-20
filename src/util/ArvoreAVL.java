@@ -3,8 +3,6 @@
  */
 package util;
 
-import model.Palavra;
-
 /**
  *
  * @author Anésio
@@ -14,31 +12,6 @@ public class ArvoreAVL {
     private Node raiz;
     private int tam = 0;
     
-    public class Node {
-        Palavra dado;
-        int altura;
-        int fator;
-        Node esquerda;
-        Node direita;
-
-        public Node(String data){dado = new Palavra(data);altura = 1;}
-        public Palavra getDado() {return dado;}
-        public void setDado(String dado) {this.dado.setPalavraChave(dado);}
-        public int getAltura() {return altura;}
-        public void setAltura(int altura) {this.altura = altura;}
-        public int getFator() { return fator;}
-        public void setFator(int fator) {this.fator = fator;}
-        public Node getEsquerda() {return esquerda;}
-        public void setEsquerda(Node esquerda) {this.esquerda = esquerda;}
-        public Node getDireita() {return direita;}
-        public void setDireita(Node direita) {this.direita = direita;}
-
-        @Override
-        public String toString() {
-            return dado.toString();
-        }
-        
-    }
     // Não permite palavras repetidas
     public boolean inserir(String chave) {
         if (chave == null) {
@@ -56,7 +29,7 @@ public class ArvoreAVL {
         if (node == null) {
             return new Node(chave); // Caso base
         }
-        int resultado = chave.compareToIgnoreCase(node.getDado().getPalavraChave());
+        int resultado = chave.compareToIgnoreCase(node.getDado());
 
         if (resultado < 0) {  // Vai pra esquerda?
             node.setEsquerda(inserir(node.getEsquerda(), chave));
@@ -92,7 +65,7 @@ public class ArvoreAVL {
             return null;
         }
 
-        int resultado = chave.compareToIgnoreCase(node.getDado().getPalavraChave());
+        int resultado = chave.compareToIgnoreCase(node.getDado());
 
         if (resultado < 0) { // então quer dizer que o valor que procuramos está do lado esquerdo
             node.setEsquerda(remover(node.getEsquerda(), chave));
@@ -115,6 +88,7 @@ public class ArvoreAVL {
         return balancear(node);
     }
     
+    // RETIRAR ESSE PRIMEIRO DEPOISSS>>>>>>>>>>>>>>>>>>
     /**
      * Método que encontra um nó, dada uma chave. Esse método chama um método privado que percorre a árvore e retorna a informação da existência ou não de um nó que contém essa chave.
      *
@@ -129,7 +103,7 @@ public class ArvoreAVL {
         if (node == null) {
             return false; // Caso base
         }
-        int comparacao = chave.compareToIgnoreCase(node.getDado().getPalavraChave());
+        int comparacao = chave.compareToIgnoreCase(node.getDado());
         if (comparacao < 0) {
             return contains(node.getEsquerda(), chave);
         }
@@ -225,7 +199,7 @@ public class ArvoreAVL {
             node = node.getDireita();
         }
 
-        return node.getDado().getPalavraChave();
+        return node.getDado();
     }
     
     public int altura() {
@@ -239,10 +213,10 @@ public class ArvoreAVL {
     public Node encontrar(String chave) {  
         Node atual = raiz;
         while(atual != null){
-            if(chave.compareTo(atual.getDado().getPalavraChave()) < 0){
+            if(chave.compareTo(atual.getDado()) < 0){
                 atual = atual.getEsquerda();
             }
-            else if(chave.compareTo(atual.getDado().getPalavraChave()) > 0){
+            else if(chave.compareTo(atual.getDado()) > 0){
                 atual = atual.getDireita();
             }else
                 return atual;
@@ -260,5 +234,41 @@ public class ArvoreAVL {
 
     public Node getRaiz() {
         return raiz;
+    }
+    
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< FAZERRRRRRRRRRRRRRRRRRRRRRR TEEEEEEEESSSTEEEEESS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    // Returns as iterator to traverse the tree in order.
+    public java.util.Iterator<String> iterator () {
+
+        final int expectedNodeCount = tam;
+        final java.util.Stack<Node> stack = new java.util.Stack<>();
+        stack.push(raiz);
+
+        return new java.util.Iterator<String> () {
+            Node trav = raiz;
+            @Override 
+            public boolean hasNext() {
+                if (expectedNodeCount != tam) throw new java.util.ConcurrentModificationException();        
+                return raiz != null && !stack.isEmpty();
+            }
+            @Override 
+            public String next () {
+                if (expectedNodeCount != tam) throw new java.util.ConcurrentModificationException();
+
+                while(trav != null && trav.getEsquerda() != null) {
+                    stack.push(trav.getEsquerda());
+                    trav = trav.getEsquerda();
+                }
+
+                Node node = stack.pop();
+
+                if (node.getDireita() != null) {
+                    stack.push(node.getDireita());
+                    trav = node.getDireita();
+                }
+
+                return node.getDado();
+            }      
+        };
     }
 }
