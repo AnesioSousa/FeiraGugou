@@ -14,7 +14,7 @@ import util.*;
  * @author Anésio
  */
 public class Controlador {
-    private ArrayList<Pagina> todasPaginas = new ArrayList<>();    // Já esse atributo é somente utilizado para salvar os nomes dos arquivos, pq não botar uma lista de strings?
+    private ArrayList<String> nomesArquivos = new ArrayList<>();    // Já esse atributo é somente utilizado para salvar os nomes dos arquivos, pq não botar uma lista de strings?
     private Arquivos man = new Arquivos();
     public ArvoreAVL tree = new ArvoreAVL();
     
@@ -25,13 +25,12 @@ public class Controlador {
     public Controlador(){
         File[] arquivos = man.obter();
         for (File arquivo : arquivos) {
-            Pagina pag = new Pagina();
             int pos = arquivo.getName().indexOf(".");
-            pag.setTitulo(arquivo.getName().substring(0, pos)); 
-            todasPaginas.add(pag);
+            String nome = arquivo.getName().substring(0, pos); 
+            nomesArquivos.add(nome);
         }
     }
-    // SE A PALAVRA NÃO ESTIVER NA ÁRVORE ELE VAI INSERIR, ATUALIZAR OS DADOS E RETORNAR O ITERADOR. SE JÁ ESTIVER, ELE SIMPLESMENTE RETORNA O ITERADOR;
+    // SE A PALAVRA NÃO ESTIVER NA ÁRVORE, ELE VAI INSERIR, ATUALIZAR OS DADOS E RETORNAR O ITERADOR. SE JÁ ESTIVER, ELE SIMPLESMENTE RETORNA O ITERADOR;
     public Iterator pesquisar(String palavra){
         Node ret = tree.encontrar(palavra);
         
@@ -46,10 +45,9 @@ public class Controlador {
     }
      
     private Node atualizarDados(Node node){  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;
-        Iterator itr = null;
-        for (Pagina pagina : todasPaginas) {
+        for (String titulo: nomesArquivos) { 
             int cont = 0;
-            File arquivo = getArquivo(pagina.getTitulo());
+            File arquivo = getArquivo(titulo);  
             try{
                 Scanner input = new Scanner(arquivo);
                 while(input.hasNext()){
@@ -70,13 +68,10 @@ public class Controlador {
                 }
                 if(cont != 0){ // Se tiver pelo menos 1 ocorrência da palavra no arquivo txt
                     ArrayList<Pagina> a = node.getPaginas();
-                    
-                    pagina.setOcorrencias(cont);
-                    a.add(pagina);
-                    pagina.setOcorrencias(0);
-                    
-                    /*System.out.println(pagina);
-                    System.out.println(cont);*/
+                    Pagina pag = new Pagina();
+                    pag.setTitulo(titulo);
+                    pag.setOcorrencias(cont);
+                    a.add(pag);
                 }
                 input.close();
             }catch(FileNotFoundException ex) {

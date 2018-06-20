@@ -18,8 +18,8 @@ public class ArvoreAVL {
             return false;
         }
         if (!contains(raiz, chave)) {
-            raiz = inserir(raiz, chave);
             tam++;
+            raiz = inserir(raiz, chave);
             return true;
         }
         return false;
@@ -36,8 +36,14 @@ public class ArvoreAVL {
         } else {
             node.setDireita(inserir(node.getDireita(), chave));
         }
-
-        atualizar(node);
+        // ERRRROOOOOO >>>>>>>> PESQUISE "rato" "rei" "rato". RATO DEVE SER A RAIZ, MAS REI ESTA SENDO, POR QUE? -> 
+        // POR QUE A ÁRVORE BALANCEIA SEMPRE, MESMO ESTANDO COM 2. SE VOCE INSERIR A, E DEPOIS B, A NÃO SERÁ A RAIZ, E SIM B.
+        // SOLUÇÃO:
+        
+        // TOMAR CERTEZA DISSO DEPOIS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        if(tamanho() > 2)
+            atualizar(node);
+        
         return balancear(node);
     }
     
@@ -82,7 +88,7 @@ public class ArvoreAVL {
                 node.setEsquerda(remover(node.getEsquerda(), valorDoSucessor));
             }
         }
-
+        
         atualizar(node);
 
         return balancear(node);
