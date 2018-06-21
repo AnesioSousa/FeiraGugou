@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.StringTokenizer;
+import java.util.regex.*;
 import model.*;
 import util.*;
 
@@ -53,7 +54,9 @@ public class Controlador {
                 while(input.hasNext()){
                     String linha = input.nextLine();
                     
-                    StringTokenizer tkn = new StringTokenizer(linha);
+                    String aux = prepararLinha(linha);
+                    
+                    StringTokenizer tkn = new StringTokenizer(aux);
                     
                     while(tkn.hasMoreTokens()){
                         String cmp = tkn.nextToken();
@@ -93,6 +96,22 @@ public class Controlador {
             }
         }
         return null;
+    }
+    
+    private String prepararLinha(String str2Clean){
+        Pattern padrao = Pattern.compile("[\\p{L}0-9]+{1,}");
+        Matcher combinador = padrao.matcher(str2Clean);
+        String palavrasPreparadas;
+        String a = "";
+        
+        while(combinador.find()){
+            if(combinador.group().length() != 0){
+                palavrasPreparadas = combinador.group();
+                a += palavrasPreparadas+" ";
+            }
+        }
+        
+        return a;
     }
     
 }
