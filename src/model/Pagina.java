@@ -18,7 +18,9 @@ public class Pagina {
 
     @Override
     public String toString() {
-        return "Pagina{" + "titulo=" + titulo + ", ocorrencias=" + ocorrencias + '}';
+        //int pos = titulo.indexOf(".");
+        //String nome = titulo.substring(0, pos); 
+        return "Pagina{" + "titulo=" + titulo /*nome*/ + ", ocorrencias=" + ocorrencias + '}';
         //                                         PARA TESTES!!! RETIRAR DEPOIS
     }
     

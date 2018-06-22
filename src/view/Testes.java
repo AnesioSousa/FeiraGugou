@@ -2,14 +2,10 @@ package view;
 
 //import controller.Controlador;
 import controller.Controlador;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import util.ArvoreAVL;
 import java.util.Scanner;
-import java.util.Vector;
 import model.Pagina;
-import java.util.regex.*;
 
 /**
  *
@@ -26,15 +22,22 @@ class Testes {
             System.out.printf("Digite a palavra: ");
             String palavra = input.nextLine();
             
-            Iterator<Pagina> itr = ctr.pesquisar(palavra);
-            while(itr.hasNext()){
+            System.out.println(ctr.pesquisar(palavra));
+            /*Iterator<Pagina> itr = ctr.pesquisar(palavra);
+            if(!itr.hasNext()){
+                System.out.println("Não foi achado!");
+            }else{
+                while(itr.hasNext()){
                 Pagina a = itr.next();
                 System.out.println(a);
-            }
+                }
+            }*/
+            
             
             System.out.println("Deseja sair?");
             op = input.nextLine();
         }
+        
 
     }
 }

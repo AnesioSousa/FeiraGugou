@@ -26,13 +26,19 @@ public class Controlador {
     public Controlador(){
         File[] arquivos = man.obter();
         for (File arquivo : arquivos) {
-            int pos = arquivo.getName().indexOf(".");
+            int pos = arquivo.getName().indexOf("."); // é melhor tirar isso, em usuários windows é possivel que não mostre a extensão .txt no nome do arquivo.
             String nome = arquivo.getName().substring(0, pos); 
             nomesArquivos.add(nome);
         }
     }
     // SE A PALAVRA NÃO ESTIVER NA ÁRVORE, ELE VAI INSERIR, ATUALIZAR OS DADOS E RETORNAR O ITERADOR. SE JÁ ESTIVER, ELE SIMPLESMENTE RETORNA O ITERADOR;
-    public Iterator pesquisar(String palavra){
+    public Iterator pesquisar(String palavra){ // VER SE É PRA PROCURAR A COMPOSTA PRIMEIRO DEPOIS OS PEDAÇOS OU OS PEDAÇOS PRIMEIRO DEPOIS A COMPOSTA.
+        if(verificarMultiPalavras(palavra)){ // Verifica se é palavra composta. Se for, quebra toda a palavra, e pega todos os pedaços e pesquisa cada um.
+            String[] str = palavra.split("");
+            pesquisar(str[i++]);               // ESTÁ ERRAAAAAAADOOO!!!! ESTÁ AI SÓ PRA DIZER QUE QUERO FAZER RECURSIVO A BAGAÇA
+                                            
+        }
+
         Node ret = tree.encontrar(palavra);
         
         if(ret == null){ 
@@ -99,7 +105,7 @@ public class Controlador {
     }
     
     private String prepararLinha(String str2Clean){
-        Pattern padrao = Pattern.compile("[\\p{L}0-9]+{1,}");
+        Pattern padrao = Pattern.compile("[\\p{L}0-9]+{1,}"); // ver se dá pra retirar o {1,}
         Matcher combinador = padrao.matcher(str2Clean);
         String palavrasPreparadas;
         String a = "";
@@ -112,6 +118,12 @@ public class Controlador {
         }
         
         return a;
-    }
+    }  
     
+    private boolean verificarMultiPalavras(String palavra){
+        Pattern padrao = Pattern.compile("\\s+[A-Za-z]+");
+        Matcher combinador = padrao.matcher(palavra);
+
+        return combinador.find();
+    }
 }
