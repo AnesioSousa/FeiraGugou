@@ -20,14 +20,14 @@ import util.*;
  */
 class Testes {
     public static void main(String[] args) {
-        ArvoreAVL tree = new ArvoreAVL();
+       // ArvoreAVL tree = new ArvoreAVL();
         Controlador ctr = new Controlador();
-        Arquivos man = new Arquivos();
+       // Arquivos man = new Arquivos();
         Scanner input = new Scanner(System.in);
         String op = null;
-        ArrayList<File> arquivos = man.obter();
-        ArrayList<Pagina> paginas = new ArrayList<>();
-        MergeSort m = new MergeSort();
+        //ArrayList<File> arquivos = man.obter();
+        //ArrayList<Pagina> paginas = new ArrayList<>();
+       // MergeSort m = new MergeSort();
         
         /*Pagina a = new Pagina();
         a.setTitulo("Anésio");

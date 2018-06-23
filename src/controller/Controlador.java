@@ -21,7 +21,7 @@ public class Controlador {
     private MergeSort mergeSort = new MergeSort();
     public ArvoreAVL tree = new ArvoreAVL();
     private ArrayList<File> arquivos = files.obter();
-    private ArrayList<Pagina> paginas = new ArrayList<>();
+    private ArrayList<Pagina> paginas = new ArrayList<>();      // Verificar se isso é realmente necessário.
 
     public Controlador() {
         obterPaginas(paginas, arquivos);
@@ -29,9 +29,9 @@ public class Controlador {
 
     public Iterator pesquisar(String palavra) {
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
-        // algumaVariavelBoolean = verificarIntegridade();
-
-        Node ret = tree.encontrar(palavra);
+        boolean teste = verificarIntegridade();
+        System.out.println(teste);
+        Node ret = tree.encontrar(palavra);        // Ele já entra aqui com o repositório atualizado.
 
         if (ret == null) {
             tree.inserir(palavra);
@@ -94,9 +94,18 @@ public class Controlador {
     private boolean verificarIntegridade() {
         ArrayList<File> repoAtual = files.obter();
         boolean flag = true;
-
-        if ((paginas == null && repoAtual != null) || paginas != null && repoAtual == null || paginas.size() != repoAtual.size()) {
-            return false;
+        
+        if(arquivos.size() != repoAtual.size()){
+            if(arquivos.size() < repoAtual.size()){ // (FOI ADD) Se tiver menos itens no local, do que no repositório.
+                System.out.println("Itens foram adicionados!!");
+                atualizarArquivos();
+            
+            }else{                                  // (FOI RMV) Se tiver mais itens no local do que no repositório.
+                System.out.println("Itens foram removidos!!");
+                atualizarArquivos();
+            }
+                
+            flag = false;
         }
 
         return flag;
