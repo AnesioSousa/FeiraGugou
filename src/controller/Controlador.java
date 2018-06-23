@@ -3,10 +3,8 @@ package controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.regex.*;
@@ -18,45 +16,50 @@ import util.*;
  * @author Anésio
  */
 public class Controlador {
-    private Arquivos man = new Arquivos();
+
+    private Arquivos files = new Arquivos();
+    private MergeSort mergeSort = new MergeSort();
     public ArvoreAVL tree = new ArvoreAVL();
-    private File[] arquivos = man.obter();
-    
-    // SE A PALAVRA NÃO ESTIVER NA ÁRVORE, ELE VAI INSERIR, ATUALIZAR OS DADOS E RETORNAR O ITERADOR. SE JÁ ESTIVER, ELE SIMPLESMENTE RETORNA O ITERADOR;
-    public Iterator pesquisar(String palavra){ 
-        /* TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
-        if(verificarIntegridade() == false){ // testar -> !verificarIntegridade()
-            
-        }*/
-        
+    private ArrayList<File> arquivos = files.obter();
+    private ArrayList<Pagina> paginas = new ArrayList<>();
+
+    public Controlador() {
+        obterPaginas(paginas, arquivos);
+    }
+
+    public Iterator pesquisar(String palavra) {
+        ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
+        // algumaVariavelBoolean = verificarIntegridade();
+
         Node ret = tree.encontrar(palavra);
-                                                                
-        if(ret == null){ 
+
+        if (ret == null) {
             tree.inserir(palavra);
             ret = tree.encontrar(palavra);  // tentar tirar isso depois
-            ret = atualizarDados(ret);
+            ret = atualizarPalavra(ret);
         }
-        ret.incrementVezesBuscada();        
-       
+        ret.incrementVezesBuscada();
+        mergeSort.sort(ret.getPaginas());
+
         return ret.listarPaginas();
     }
-     
-    private Node atualizarDados(Node node){  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;
-        for (File arquivo: arquivos) { 
+
+    private Node atualizarPalavra(Node node) {  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;
+        for (File arquivo : arquivos) {
             int cont = 0;
-            try{
+            try {
                 Scanner input = new Scanner(arquivo);
-                while(input.hasNext()){
+                while (input.hasNext()) {
                     String linha = input.nextLine();
-                    
+
                     String aux = prepararLinha(linha);
-                    
+
                     StringTokenizer tkn = new StringTokenizer(aux);
-                    
-                    while(tkn.hasMoreTokens()){
+
+                    while (tkn.hasMoreTokens()) {
                         String cmp = tkn.nextToken();
-                        
-                        if(cmp.equalsIgnoreCase(node.getDado())){
+
+                        if (cmp.equalsIgnoreCase(node.getDado())) {
                             cont++;
                         }
 
@@ -64,7 +67,7 @@ public class Controlador {
                     }
                     //System.out.println();
                 }
-                if(cont != 0){ // Se tiver pelo menos 1 ocorrência da palavra no arquivo txt
+                if (cont != 0) { // Se tiver pelo menos 1 ocorrência da palavra no arquivo txt
                     ArrayList<Pagina> a = node.getPaginas();
                     Pagina pag = new Pagina();
                     pag.setTitulo(arquivo.getName());
@@ -72,47 +75,75 @@ public class Controlador {
                     a.add(pag);
                 }
                 input.close();
-            }catch(FileNotFoundException ex) {
+            } catch (FileNotFoundException ex) {
                 System.out.println(ex);
             }
         }
         return node;
     }
-    
-    // ESSE MÉTODO FUTURAMENTE VAI SER MAIS ÚTIL DO QUE O MÉTODO "atribuirPaginas"
-    public File getArquivo(String titulo){
-        File[] arquivos = man.obter();
-        for(File arquivo: arquivos){
+
+    private void obterPaginas(ArrayList<Pagina> lista, ArrayList<File> arq) {
+        for (File a : arq) {
+            Pagina pagina = new Pagina();
+            pagina.setTitulo(a.getName());
+            pagina.setInfo(a.lastModified());
+            lista.add(pagina);
+        }
+    }
+
+    private boolean verificarIntegridade() {
+        ArrayList<File> repoAtual = files.obter();
+        boolean flag = true;
+
+        if ((paginas == null && repoAtual != null) || paginas != null && repoAtual == null || paginas.size() != repoAtual.size()) {
+            return false;
+        }
+
+        return flag;
+    }
+
+    private boolean verificarMultiPalavras(String palavra) {
+        Pattern padrao = Pattern.compile("\\s+[A-Za-z]+");
+        Matcher verificador = padrao.matcher(palavra);
+
+        return verificador.find();
+    }
+
+    private String prepararLinha(String str2Clean) {
+        Pattern padrao = Pattern.compile("[\\p{L}0-9]+{1,}"); // ver se dá pra retirar o {1,}
+        Matcher verificador = padrao.matcher(str2Clean);
+        String palavrasPreparadas;
+        String a = "";
+
+        while (verificador.find()) {
+            if (verificador.group().length() != 0) {
+                palavrasPreparadas = verificador.group();
+                a += palavrasPreparadas + " ";
+            }
+        }
+
+        return a;
+    }
+
+    public File getArquivo(String titulo) {
+        ArrayList<File> arq = files.obter();
+        for (File arquivo : arq) {
             int pos = arquivo.getName().indexOf(".");
             String aux = arquivo.getName().substring(0, pos);
-            
-            if(aux.equals(titulo)){
+
+            if (aux.equals(titulo)) {
                 return arquivo;
             }
         }
         return null;
     }
-    
-    private String prepararLinha(String str2Clean){
-        Pattern padrao = Pattern.compile("[\\p{L}0-9]+{1,}"); // ver se dá pra retirar o {1,}
-        Matcher combinador = padrao.matcher(str2Clean);
-        String palavrasPreparadas;
-        String a = "";
-        
-        while(combinador.find()){
-            if(combinador.group().length() != 0){
-                palavrasPreparadas = combinador.group();
-                a += palavrasPreparadas+" ";
-            }
-        }
-        
-        return a;
-    }  
-    
-    private boolean verificarMultiPalavras(String palavra){
-        Pattern padrao = Pattern.compile("\\s+[A-Za-z]+");
-        Matcher combinador = padrao.matcher(palavra);
 
-        return combinador.find();
+    private void atualizarArquivos() {
+        arquivos = files.obter();
     }
+
+    public Iterator getPaginas() {
+        return paginas.iterator();
+    }
+
 }
