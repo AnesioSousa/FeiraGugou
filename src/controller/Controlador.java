@@ -32,15 +32,18 @@ public class Controlador {
         //System.out.println(teste);
         Node ret = tree.encontrar(palavra);        // Ele já entra aqui com o repositório atualizado.
 
-        if (ret == null) {
+        if(ret == null){
             tree.inserir(palavra);
             ret = tree.encontrar(palavra);  // tentar tirar isso depois
             ret = atualizarPalavra(ret);
         }
+        if(ret.getDados().isEmpty()){
+           tree.remover(palavra);
+           return null;
+        }
         ret.incrementVezesBuscada();
         mergeSort.sort(ret.getDados());
-        //<<<<<<<<<<<<<<<<<<<<<<<<<<<< SE A LISTA DE PAGINAS DE UMA PALAVRA ESTIVER VAZIA QUER DIZER QUE NÃO ACHOU MATCHES, ENTÃO DEVE REMOVER O NÓ >>>>>>>>>>>>>>>>>>
-        return ret.listarPaginas();
+        return ret.listarDados();
     }
 
     private Node atualizarPalavra(Node node) {  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;

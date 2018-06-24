@@ -37,7 +37,7 @@ public class Node{
         public int getVezesBuscada() {return vezesBuscada;}
         public void incrementVezesBuscada() {this.vezesBuscada++;}
         public ArrayList<Dados> getDados() {return dados;}
-        public Iterator listarPaginas(){return dados.iterator();}
+        public Iterator listarDados(){return dados.iterator();}
         
         @Override
         public String toString() {

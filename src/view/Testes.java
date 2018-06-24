@@ -90,7 +90,7 @@ class Testes {
             String palavra = input.nextLine();
 
             Iterator<Dados> itr = ctr.pesquisar(palavra);
-            if(!itr.hasNext()){
+            if(itr == null){
                 System.out.println("Não foi achado!");
             }else{
                 while(itr.hasNext()){
