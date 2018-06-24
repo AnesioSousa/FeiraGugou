@@ -20,17 +20,16 @@ public class Controlador {
     private Arquivos files = new Arquivos();
     private MergeSort mergeSort = new MergeSort();
     public ArvoreAVL tree = new ArvoreAVL();
-    private ArrayList<File> arquivos = files.obter();
-    private ArrayList<Pagina> paginas = new ArrayList<>();      // Verificar se isso é realmente necessário.
-
-    public Controlador() {
-        obterPaginas(paginas, arquivos);
+    private ArrayList<Pagina> paginas = new ArrayList<>();
+    
+    public Controlador(){
+        this.paginas = files.passarArqParaPaginas(paginas, files.obterRepositorio()); 
     }
 
     public Iterator pesquisar(String palavra) {
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
-        boolean teste = verificarIntegridade();
-        System.out.println(teste);
+        //boolean teste = verificarIntegridade();
+        //System.out.println(teste);
         Node ret = tree.encontrar(palavra);        // Ele já entra aqui com o repositório atualizado.
 
         if (ret == null) {
@@ -40,13 +39,15 @@ public class Controlador {
         }
         ret.incrementVezesBuscada();
         mergeSort.sort(ret.getPaginas());
-
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<< SE A LISTA DE PAGINAS DE UMA PALAVRA ESTIVER VAZIA QUER DIZER QUE NÃO ACHOU MATCHES, ENTÃO DEVE REMOVER O NÓ >>>>>>>>>>>>>>>>>>
         return ret.listarPaginas();
     }
 
     private Node atualizarPalavra(Node node) {  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;
-        for (File arquivo : arquivos) {
+        for (Pagina pagina: paginas) {
             int cont = 0;
+            File arquivo = getArquivo(pagina.getTitulo());
+            
             try {
                 Scanner input = new Scanner(arquivo);
                 while (input.hasNext()) {
@@ -82,17 +83,16 @@ public class Controlador {
         return node;
     }
 
-    private void obterPaginas(ArrayList<Pagina> lista, ArrayList<File> arq) {
-        for (File a : arq) {
-            Pagina pagina = new Pagina();
-            pagina.setTitulo(a.getName());
-            pagina.setInfo(a.lastModified());
-            lista.add(pagina);
-        }
+    private void atualizarPaginas(){
+        
     }
+    
+    /*private void atualizarArquivos() {
+        arquivos = files.obterRepositorio();
+    }*/
 
-    private boolean verificarIntegridade() {       //  << AGORA TEM QUE VER A QUESTÃO: SE PAGINAS FORAM ADICIONADAS OU REMOVIDAS,
-        ArrayList<File> repoAtual = files.obter(); // QUAIS FORAM ESSAS PÁGINAS? JUSTAMENTE PRA PODER ATUALIZAR A LISTA DE PÁGINAS DO CONTROLLER
+    /*private boolean verificarIntegridade() {       //  << AGORA TEM QUE VER A QUESTÃO: SE PAGINAS FORAM ADICIONADAS OU REMOVIDAS,
+        ArrayList<File> repoAtual = files.obterRepositorio(); // QUAIS FORAM ESSAS PÁGINAS? JUSTAMENTE PRA PODER ATUALIZAR A LISTA DE PÁGINAS DO CONTROLLER
         boolean flag = true;                       // E OS NÓS (PALAVRAS BUSCADAS) QUE TEM RESULTADOS NESSES ARQUIVOS QUE FORAM ALTERADOS. 
         
         // VEI, VAI TER QUE PERCORRER TUDO DE QUALQUER JEITO. VÁ POR MIM. EX: UM ARQUIVO FOI REMOVIDO, E OUTROS SÓ ALTERADOS. O QUE FAZER? SÓ IDENTIFICAR E ATUALIZAR A ÁRVORE POR CAUSA DO REMOVIDO?
@@ -110,7 +110,7 @@ public class Controlador {
         }
 
         return flag;
-    }
+    }*/
 
     private boolean verificarMultiPalavras(String palavra) {
         Pattern padrao = Pattern.compile("\\s+[A-Za-z]+");
@@ -136,20 +136,13 @@ public class Controlador {
     }
 
     public File getArquivo(String titulo) {
-        ArrayList<File> arq = files.obter();
+        ArrayList<File> arq = files.obterRepositorio();
         for (File arquivo : arq) {
-            int pos = arquivo.getName().indexOf(".");
-            String aux = arquivo.getName().substring(0, pos);
-
-            if (aux.equals(titulo)) {
+            if (arquivo.getName().equals(titulo)) {
                 return arquivo;
             }
         }
         return null;
-    }
-
-    private void atualizarArquivos() {
-        arquivos = files.obter();
     }
 
     public Iterator getPaginas() {
