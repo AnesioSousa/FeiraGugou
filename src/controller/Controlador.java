@@ -87,50 +87,69 @@ public class Controlador {
     }
 
     private void atualizarPaginas(){
-        paginas = files.passarArqParaPaginas(paginas, files.obterRepositorio()); 
+        
     }
     
     /*private void atualizarArquivos() {
         arquivos = files.obterRepositorio();
     }*/
 
-    private void atualizarTree(ArrayList<String> removidas){
+    private void atualizarArvore(ArrayList<String> removidas){
         // percorrer a lista de paginas verificando os isModified.
         // percorrer árvore procurando nós que tenham dados de páginas que foram removidas.
     }
     
-    private boolean verificarIntegridade() {       //  << AGORA TEM QUE VER A QUESTÃO: SE PAGINAS FORAM ADICIONADAS OU REMOVIDAS,
-                                                     // QUAIS FORAM ESSAS PÁGINAS? JUSTAMENTE PRA PODER ATUALIZAR A LISTA DE PÁGINAS DO CONTROLLER
-        boolean flag = true;                       // E OS NÓS (PALAVRAS BUSCADAS) QUE TEM RESULTADOS NESSES ARQUIVOS QUE FORAM ALTERADOS. 
+    private boolean verificarIntegridade() {       
+        boolean flag = true;                                             
+                             
+        //  << AGORA TEM QUE VER A QUESTÃO: SE PAGINAS FORAM ADICIONADAS OU REMOVIDAS,
+        // QUAIS FORAM ESSAS PÁGINAS? JUSTAMENTE PRA PODER ATUALIZAR A LISTA DE PÁGINAS DO CONTROLLER
+        // E OS NÓS (PALAVRAS BUSCADAS) QUE TEM RESULTADOS NESSES ARQUIVOS QUE FORAM ALTERADOS. 
         
         ArrayList<String> removidas = new ArrayList<>();
-        ArrayList<Pagina> aComparar = new ArrayList<>();                    // Cria uma lista vazia de páginas;
-        aComparar = files.passarArqParaPaginas(aComparar, files.obterRepositorio());    // Faz com que essa lista receba todos os arquivos do diretorio atual;                          
         
-        // VEI, VAI TER QUE PERCORRER TUDO DE QUALQUER JEITO. VÁ POR MIM. EX: UM ARQUIVO FOI REMOVIDO, E OUTROS SÓ ALTERADOS. O QUE FAZER? SÓ IDENTIFICAR E ATUALIZAR A ÁRVORE POR CAUSA DO REMOVIDO?
-        if(paginas.size() != aComparar.size()){
-            if(paginas.size() < aComparar.size()){ // (FOI ADD) Se tiver menos itens no local, do que no repositório.
-                System.out.println("Itens foram adicionados!!");
-                //atualizarArquivos();
+        // SE PASSAR DIRETO, É PQ NENHUM ARQUIVO FOI REMOVIDO NEM MODIFICADO.
+        for (int i = 0; i < paginas.size(); i++) {
+            File arq = getArquivo(paginas.get(i).getTitulo()); // Verifica e tira da lista os arquivos removidos do diretório.  // <<<<<< SE "aComparar" JA TEM TODOS OS ARQUIVOS, POR QUE NÃO TO USANDO "aComparar" PRA FAZER OS TESTES?
+            if(arq == null){
+                System.out.println(paginas.get(i).getTitulo() +" "+ "FOI REMOVIDO!!");
+                removidas.add(paginas.get(i).getTitulo());
+                paginas.remove(i);
+            }else{                                             // Pega os arquivos não removidos
+                System.out.println("ARQUIVO EXISTEEE");
+                if(paginas.get(i).getInfo() == arq.lastModified()){
+                    // Pula pro próximo.
+                }else{
+                    flag = false;
+                    paginas.get(i).setIsModified(true); // Verifica quais páginas foram modificadas, e as marca. Para depois ser feita
+                                                        //a releitura desses arquivos, e a atualização dos nós que tem essas paginas modificadas.
+                }
+            }        
+        }
+        // TEM QUE ADD NOVOS ARQUIVOS À LISTA DE PAGINAS:
+        int novo = 0;
+        ArrayList<Pagina> aComparar = new ArrayList();
+        aComparar = files.passarArqParaPaginas(aComparar, files.obterRepositorio());
         
-            }else{                                  // (FOI RMV) Se tiver mais itens no local do que no repositório.
-                System.out.println("Itens foram removidos!!");
-                for (int i = 0; i < paginas.size(); i++) {
-                    File arq = getArquivo(paginas.get(i).getTitulo());
-                    if(arq == null){
-                        System.out.println(paginas.get(i).getTitulo() +" "+ "FOI REMOVIDO!!");
-                        removidas.add(paginas.get(i).getTitulo());
-                        paginas.remove(i);
-                    }else{
-                        System.out.println("EXISTEEE");
+        if(paginas.size() < aComparar.size()){
+                                
+            for (Pagina atual: aComparar) {
+                
+                for (Pagina pag : paginas) {
+                    if(!atual.getTitulo().equals(pag.getTitulo())){
+                        novo++;
                     }
-                    
+                }
+                if(novo == paginas.size()){
+                    Pagina p = new Pagina();
+                    p.setTitulo(atual.getTitulo());
+                    p.setInfo(atual.getInfo());
+                    paginas.add(p);                           // Ver se não da pra deixar só paginas.add(atual);
                 }
             }
-            //atualizarTree(removidas);
-                
-            flag = false;
         }
+        
+        // AQUI TEM QUE ATUALIZAR A ÁRVORE UTILIZANDO A NOVA LISTA DE PAGINAS.
 
         return flag;
     }

@@ -18,7 +18,7 @@ public class Pagina implements Comparable<Pagina>{
     public void setVezesAcessada(int vezesAcessada) {this.vezesAcessada = vezesAcessada;}
     public long getInfo() {return info;}
     public void setInfo(long info) {this.info = info;}
-    public boolean isIsModified() {return isModified;}
+    public boolean isModified() {return isModified;}
     public void setIsModified(boolean isModified) {this.isModified = isModified; }
 
     /*@Override
