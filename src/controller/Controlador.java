@@ -91,15 +91,16 @@ public class Controlador {
         }
     }
 
-    private boolean verificarIntegridade() {
-        ArrayList<File> repoAtual = files.obter();
-        boolean flag = true;
+    private boolean verificarIntegridade() {       //  << AGORA TEM QUE VER A QUESTÃO: SE PAGINAS FORAM ADICIONADAS OU REMOVIDAS,
+        ArrayList<File> repoAtual = files.obter(); // QUAIS FORAM ESSAS PÁGINAS? JUSTAMENTE PRA PODER ATUALIZAR A LISTA DE PÁGINAS DO CONTROLLER
+        boolean flag = true;                       // E OS NÓS (PALAVRAS BUSCADAS) QUE TEM RESULTADOS NESSES ARQUIVOS QUE FORAM ALTERADOS. 
         
+        // VEI, VAI TER QUE PERCORRER TUDO DE QUALQUER JEITO. VÁ POR MIM. EX: UM ARQUIVO FOI REMOVIDO, E OUTROS SÓ ALTERADOS. O QUE FAZER? SÓ IDENTIFICAR E ATUALIZAR A ÁRVORE POR CAUSA DO REMOVIDO?
         if(arquivos.size() != repoAtual.size()){
             if(arquivos.size() < repoAtual.size()){ // (FOI ADD) Se tiver menos itens no local, do que no repositório.
                 System.out.println("Itens foram adicionados!!");
                 atualizarArquivos();
-            
+        
             }else{                                  // (FOI RMV) Se tiver mais itens no local do que no repositório.
                 System.out.println("Itens foram removidos!!");
                 atualizarArquivos();
