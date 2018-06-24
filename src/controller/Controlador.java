@@ -38,7 +38,7 @@ public class Controlador {
             ret = atualizarPalavra(ret);
         }
         ret.incrementVezesBuscada();
-        mergeSort.sort(ret.getPaginas());
+        mergeSort.sort(ret.getDados());
         //<<<<<<<<<<<<<<<<<<<<<<<<<<<< SE A LISTA DE PAGINAS DE UMA PALAVRA ESTIVER VAZIA QUER DIZER QUE NÃO ACHOU MATCHES, ENTÃO DEVE REMOVER O NÓ >>>>>>>>>>>>>>>>>>
         return ret.listarPaginas();
     }
@@ -60,7 +60,7 @@ public class Controlador {
                     while (tkn.hasMoreTokens()) {
                         String cmp = tkn.nextToken();
 
-                        if (cmp.equalsIgnoreCase(node.getDado())) {
+                        if (cmp.equalsIgnoreCase(node.getChave())) {
                             cont++;
                         }
 
@@ -69,11 +69,11 @@ public class Controlador {
                     //System.out.println();
                 }
                 if (cont != 0) { // Se tiver pelo menos 1 ocorrência da palavra no arquivo txt
-                    ArrayList<Pagina> a = node.getPaginas();
-                    Pagina pag = new Pagina();
-                    pag.setTitulo(arquivo.getName());
-                    pag.setOcorrencias(cont);
-                    a.add(pag);
+                    ArrayList<Dados> a = node.getDados();
+                    Dados data = new Dados();
+                    data.setTitulo(arquivo.getName());
+                    data.setFrequencia(cont);
+                    a.add(data);
                 }
                 input.close();
             } catch (FileNotFoundException ex) {

@@ -48,15 +48,15 @@ public class ArvoreAVLTest {
         tree.inserir("carlos");
         String esperadoNode = "beatriz";
         Node resultadoNode = tree.getRaiz();
-        assertEquals(esperadoNode, resultadoNode.getDado());  // Verifica estado da raiz após inserções (Testa rotações);
+        assertEquals(esperadoNode, resultadoNode.getChave());  // Verifica estado da raiz após inserções (Testa rotações);
 
         esperadoNode = "anesio";
         resultadoNode = tree.getRaiz().getEsquerda();
-        assertEquals(esperadoNode, resultadoNode.getDado());  // Verifica estado do filho da esquerda após inserções (Testa rotações);
+        assertEquals(esperadoNode, resultadoNode.getChave());  // Verifica estado do filho da esquerda após inserções (Testa rotações);
 
         esperadoNode = "carlos";
         resultadoNode = tree.getRaiz().getDireita();
-        assertEquals(esperadoNode, resultadoNode.getDado());  // Verifica estado do filho da direita após inserções (Testa rotações);     
+        assertEquals(esperadoNode, resultadoNode.getChave());  // Verifica estado do filho da direita após inserções (Testa rotações);     
     }
 
     /**
@@ -96,13 +96,13 @@ public class ArvoreAVLTest {
 
         String esperadoNode = "beatriz";
         Node resultadoNode = tree.getRaiz();
-        assertEquals(esperadoNode, resultadoNode.getDado());               // Verifica estado da raiz após remoções (Testa rotações);
+        assertEquals(esperadoNode, resultadoNode.getChave());               // Verifica estado da raiz após remoções (Testa rotações);
 
         esperadoNode = "anesio";
-        assertEquals(esperadoNode, resultadoNode.getEsquerda().getDado()); // Verifica estado do filho da esquerda após inserções (Testa rotações);
+        assertEquals(esperadoNode, resultadoNode.getEsquerda().getChave()); // Verifica estado do filho da esquerda após inserções (Testa rotações);
 
         esperadoNode = "carlos";
-        assertEquals(esperadoNode, resultadoNode.getDireita().getDado());  // Verifica estado do filho da direita após inserções (Testa rotações);
+        assertEquals(esperadoNode, resultadoNode.getDireita().getChave());  // Verifica estado do filho da direita após inserções (Testa rotações);
 
         assertNull(resultadoNode.getDireita().getDireita());               // Verifica se o filho da direita (daniel) do nó à direita da raiz (carlos) foi removido (Testa rotações);
 
@@ -110,29 +110,29 @@ public class ArvoreAVLTest {
         tree.remover("carlos");                                            // ---> Remove nó com apenas um filho; <---
 
         esperadoNode = "beatriz";
-        assertEquals(esperadoNode, resultadoNode.getDado());               // Verifica estado da raiz após remoção (Testa rotações);
+        assertEquals(esperadoNode, resultadoNode.getChave());               // Verifica estado da raiz após remoção (Testa rotações);
 
         esperadoNode = "anesio";
-        assertEquals(esperadoNode, resultadoNode.getEsquerda().getDado()); // Verifica estado do filho da esquerda da raiz após a remoção (Testa rotações);
+        assertEquals(esperadoNode, resultadoNode.getEsquerda().getChave()); // Verifica estado do filho da esquerda da raiz após a remoção (Testa rotações);
 
         esperadoNode = "daniel";
-        assertEquals(esperadoNode, resultadoNode.getDireita().getDado());  // Verifica estado do filho da direita da raiz após a remoção (Testa rotações);
+        assertEquals(esperadoNode, resultadoNode.getDireita().getChave());  // Verifica estado do filho da direita da raiz após a remoção (Testa rotações);
 
         tree.inserir("carlos");
         tree.inserir("emanuel");
         tree.remover("daniel");                                                        // ---> Remove nó com dois filhos; <---
 
         esperadoNode = "beatriz";
-        assertEquals(esperadoNode, resultadoNode.getDado());                           // Verifica estado da raiz após remoção (Testa rotações);
+        assertEquals(esperadoNode, resultadoNode.getChave());                           // Verifica estado da raiz após remoção (Testa rotações);
 
         esperadoNode = "anesio";
-        assertEquals(esperadoNode, resultadoNode.getEsquerda().getDado());             // Verifica estado do filho da esquerda da raiz após a remoção (Testa rotações);
+        assertEquals(esperadoNode, resultadoNode.getEsquerda().getChave());             // Verifica estado do filho da esquerda da raiz após a remoção (Testa rotações);
 
         esperadoNode = "carlos";
-        assertEquals(esperadoNode, resultadoNode.getDireita().getDado());              // Verifica estado do filho da direita da raiz após a remoção (Testa rotações);
+        assertEquals(esperadoNode, resultadoNode.getDireita().getChave());              // Verifica estado do filho da direita da raiz após a remoção (Testa rotações);
 
         esperadoNode = "emanuel";
-        assertEquals(esperadoNode, resultadoNode.getDireita().getDireita().getDado()); // Verifica estado do filho da direita (emanuel) do nó à direita da raiz (carlos),  (Testa rotações);
+        assertEquals(esperadoNode, resultadoNode.getDireita().getDireita().getChave()); // Verifica estado do filho da direita (emanuel) do nó à direita da raiz (carlos),  (Testa rotações);
     }
 
     /**
@@ -271,7 +271,7 @@ public class ArvoreAVLTest {
         
         String esperado = "anesio";
         Node resultado = tree.encontrar(chave);
-        assertEquals(esperado, resultado.getDado());
+        assertEquals(esperado, resultado.getChave());
         
         String[] vila = new String[]{"chaves", "chiquinha", "kiko"};
         
@@ -282,7 +282,7 @@ public class ArvoreAVLTest {
         chave = "kiko";
         esperado = "kiko";
         resultado = tree.encontrar(chave);
-        assertEquals(esperado, resultado.getDado());
+        assertEquals(esperado, resultado.getChave());
     }
     
     
@@ -301,13 +301,13 @@ public class ArvoreAVLTest {
         tree.inserir("anesio");                                        // É inserido um nó, e como ele é o primeiro, ele passa a ser a raiz;
         esperado = "anesio";
         resultado = tree.getRaiz();
-        assertEquals(esperado, resultado.getDado());                   // É verificado o estado da raiz;
+        assertEquals(esperado, resultado.getChave());                   // É verificado o estado da raiz;
 
         tree.inserir("beatriz");
         tree.inserir("carlos");                                        // São inseridos mais dois nós, e o valor da raiz muda por causa das rotações;
         esperado = "beatriz";
         resultado = tree.getRaiz();
-        assertEquals(esperado, resultado.getDado());                   // É verificado o estado da raiz;
+        assertEquals(esperado, resultado.getChave());                   // É verificado o estado da raiz;
 
     }
 

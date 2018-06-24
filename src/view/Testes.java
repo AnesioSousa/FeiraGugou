@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import util.ArvoreAVL;
 import java.util.Scanner;
+import model.Dados;
 import model.Pagina;
 import util.*;
 
@@ -88,12 +89,12 @@ class Testes {
             System.out.printf("Digite a palavra: ");
             String palavra = input.nextLine();
 
-            Iterator<Pagina> itr = ctr.pesquisar(palavra);
+            Iterator<Dados> itr = ctr.pesquisar(palavra);
             if(!itr.hasNext()){
                 System.out.println("Não foi achado!");
             }else{
                 while(itr.hasNext()){
-                Pagina a = itr.next();
+                Dados a = itr.next();
                 System.out.println(a);
                 }
             }

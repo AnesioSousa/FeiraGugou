@@ -2,30 +2,30 @@ package util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import model.Pagina;
+import model.Dados;
 
 /**
  *
  * @author anesio
  */
 public class Node{
-        private String dado;
+        private String chave;
         private int altura;
         private int fator;
         private Node esquerda;
         private Node direita;
         private int vezesBuscada;
-        private ArrayList<Pagina> paginas;
+        private ArrayList<Dados> dados;
 
         public Node(String data){
-            dado = data;
+            chave = data;
             altura = 1;
-            paginas = new ArrayList<>();
+            dados = new ArrayList<>();
             vezesBuscada = 0;
         }
 
-        public String getDado() {return dado;}
-        public void setDado(String dado) {this.dado = dado;}
+        public String getChave() {return chave;}
+        public void setChave(String chave) {this.chave = chave;}
         public int getAltura() {return altura;}
         public void setAltura(int altura) {this.altura = altura;}
         public int getFator() { return fator;}
@@ -36,12 +36,12 @@ public class Node{
         public void setDireita(Node direita) {this.direita = direita;}
         public int getVezesBuscada() {return vezesBuscada;}
         public void incrementVezesBuscada() {this.vezesBuscada++;}
-        public ArrayList<Pagina> getPaginas() {return paginas;}
-        public Iterator listarPaginas(){return paginas.iterator();}
+        public ArrayList<Dados> getDados() {return dados;}
+        public Iterator listarPaginas(){return dados.iterator();}
         
         @Override
         public String toString() {
-            return dado;
+            return chave;
         }
         
     }

@@ -29,7 +29,7 @@ public class ArvoreAVL {
         if (node == null) {
             return new Node(chave); // Caso base
         }
-        int resultado = chave.compareToIgnoreCase(node.getDado());
+        int resultado = chave.compareToIgnoreCase(node.getChave());
 
         if (resultado < 0) {  // Vai pra esquerda?
             node.setEsquerda(inserir(node.getEsquerda(), chave));
@@ -71,7 +71,7 @@ public class ArvoreAVL {
             return null;
         }
 
-        int resultado = chave.compareToIgnoreCase(node.getDado());
+        int resultado = chave.compareToIgnoreCase(node.getChave());
 
         if (resultado < 0) { // então quer dizer que o valor que procuramos está do lado esquerdo
             node.setEsquerda(remover(node.getEsquerda(), chave));
@@ -84,7 +84,7 @@ public class ArvoreAVL {
                 return node.getEsquerda();
             } else {  // se ele tiver ambos os filhos
                 String valorDoSucessor = encontrarValorMax(node.getEsquerda());
-                node.setDado(valorDoSucessor);
+                node.setChave(valorDoSucessor);
                 node.setEsquerda(remover(node.getEsquerda(), valorDoSucessor));
             }
         }
@@ -109,7 +109,7 @@ public class ArvoreAVL {
         if (node == null) {
             return false; // Caso base
         }
-        int comparacao = chave.compareToIgnoreCase(node.getDado());
+        int comparacao = chave.compareToIgnoreCase(node.getChave());
         if (comparacao < 0) {
             return contains(node.getEsquerda(), chave);
         }
@@ -205,7 +205,7 @@ public class ArvoreAVL {
             node = node.getDireita();
         }
 
-        return node.getDado();
+        return node.getChave();
     }
     
     public int altura() {
@@ -219,10 +219,10 @@ public class ArvoreAVL {
     public Node encontrar(String chave) {  
         Node atual = raiz;
         while(atual != null){
-            if(chave.compareToIgnoreCase(atual.getDado()) < 0){
+            if(chave.compareToIgnoreCase(atual.getChave()) < 0){
                 atual = atual.getEsquerda();
             }
-            else if(chave.compareToIgnoreCase(atual.getDado()) > 0){
+            else if(chave.compareToIgnoreCase(atual.getChave()) > 0){
                 atual = atual.getDireita();
             }else
                 return atual;
@@ -273,7 +273,7 @@ public class ArvoreAVL {
                     trav = node.getDireita();
                 }
 
-                return node.getDado();
+                return node.getChave();
             }      
         };
     }
