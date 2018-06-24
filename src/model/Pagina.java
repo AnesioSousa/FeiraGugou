@@ -6,7 +6,7 @@ import java.util.Objects;
  *
  * @author Anésio
  */
-public class Pagina{
+public class Pagina implements Comparable<Pagina>{
     private String titulo;
     private int vezesAcessada;
     private long info;
@@ -37,4 +37,11 @@ public class Pagina{
         }
         return false;
     }*/  
+
+    @Override
+    public int compareTo(Pagina o) {
+        return this.getTitulo().compareTo(o.getTitulo());
+    }
+    
+    
 }

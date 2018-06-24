@@ -28,8 +28,8 @@ public class Controlador {
 
     public Iterator pesquisar(String palavra) {
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
-        //boolean teste = verificarIntegridade();
-        //System.out.println(teste);
+        verificarIntegridade();
+
         Node ret = tree.encontrar(palavra);        // Ele já entra aqui com o repositório atualizado.
 
         if(ret == null){
@@ -87,33 +87,53 @@ public class Controlador {
     }
 
     private void atualizarPaginas(){
-        
+        paginas = files.passarArqParaPaginas(paginas, files.obterRepositorio()); 
     }
     
     /*private void atualizarArquivos() {
         arquivos = files.obterRepositorio();
     }*/
 
-    /*private boolean verificarIntegridade() {       //  << AGORA TEM QUE VER A QUESTÃO: SE PAGINAS FORAM ADICIONADAS OU REMOVIDAS,
-        ArrayList<File> repoAtual = files.obterRepositorio(); // QUAIS FORAM ESSAS PÁGINAS? JUSTAMENTE PRA PODER ATUALIZAR A LISTA DE PÁGINAS DO CONTROLLER
+    private void atualizarTree(ArrayList<String> removidas){
+        // percorrer a lista de paginas verificando os isModified.
+        // percorrer árvore procurando nós que tenham dados de páginas que foram removidas.
+    }
+    
+    private boolean verificarIntegridade() {       //  << AGORA TEM QUE VER A QUESTÃO: SE PAGINAS FORAM ADICIONADAS OU REMOVIDAS,
+                                                     // QUAIS FORAM ESSAS PÁGINAS? JUSTAMENTE PRA PODER ATUALIZAR A LISTA DE PÁGINAS DO CONTROLLER
         boolean flag = true;                       // E OS NÓS (PALAVRAS BUSCADAS) QUE TEM RESULTADOS NESSES ARQUIVOS QUE FORAM ALTERADOS. 
         
+        ArrayList<String> removidas = new ArrayList<>();
+        ArrayList<Pagina> aComparar = new ArrayList<>();                    // Cria uma lista vazia de páginas;
+        aComparar = files.passarArqParaPaginas(aComparar, files.obterRepositorio());    // Faz com que essa lista receba todos os arquivos do diretorio atual;                          
+        
         // VEI, VAI TER QUE PERCORRER TUDO DE QUALQUER JEITO. VÁ POR MIM. EX: UM ARQUIVO FOI REMOVIDO, E OUTROS SÓ ALTERADOS. O QUE FAZER? SÓ IDENTIFICAR E ATUALIZAR A ÁRVORE POR CAUSA DO REMOVIDO?
-        if(arquivos.size() != repoAtual.size()){
-            if(arquivos.size() < repoAtual.size()){ // (FOI ADD) Se tiver menos itens no local, do que no repositório.
+        if(paginas.size() != aComparar.size()){
+            if(paginas.size() < aComparar.size()){ // (FOI ADD) Se tiver menos itens no local, do que no repositório.
                 System.out.println("Itens foram adicionados!!");
-                atualizarArquivos();
+                //atualizarArquivos();
         
             }else{                                  // (FOI RMV) Se tiver mais itens no local do que no repositório.
                 System.out.println("Itens foram removidos!!");
-                atualizarArquivos();
+                for (int i = 0; i < paginas.size(); i++) {
+                    File arq = getArquivo(paginas.get(i).getTitulo());
+                    if(arq == null){
+                        System.out.println(paginas.get(i).getTitulo() +" "+ "FOI REMOVIDO!!");
+                        removidas.add(paginas.get(i).getTitulo());
+                        paginas.remove(i);
+                    }else{
+                        System.out.println("EXISTEEE");
+                    }
+                    
+                }
             }
+            //atualizarTree(removidas);
                 
             flag = false;
         }
 
         return flag;
-    }*/
+    }
 
     private boolean verificarMultiPalavras(String palavra) {
         Pattern padrao = Pattern.compile("\\s+[A-Za-z]+");
