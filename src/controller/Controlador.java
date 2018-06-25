@@ -133,15 +133,8 @@ public class Controlador {
                     d.remove(aux);
                 }
             }   
-                /* ATUALIZAR DADOS DO NODE COM AS PÁGINAS MODIFICADAS.*/
-                
-                
-                /* Removo aqui justamente por que vou ter que ler a página novamente de qualquer forma, já que eu não sei qual foi a modificação feita.
-                data.setTitulo(modificadas.get(i));
-                aux = d.indexOf(data);
-                if(aux != -1){
-                    d.remove(aux);
-                }*/
+            /* ATUALIZAR DADOS DOS NODES COM AS PÁGINAS MODIFICADAS.*/
+            /* ATUALIZAR DADOS DOS NODES COM AS PÁGINAS ADICIONADAS.*/
         }
     }
 
@@ -149,36 +142,30 @@ public class Controlador {
         boolean flag = true;
 
         ArrayList<String> removidas = new ArrayList<>();
+        ArrayList<String> modificadas = new ArrayList<>();
 
         // SE PASSAR DIRETO, É PQ NENHUM ARQUIVO FOI REMOVIDO NEM MODIFICADO.
         for (int i = 0; i < paginas.size(); i++) {
             File arq = getPagina(paginas.get(i).getTitulo()); // Verifica e tira da lista os arquivos removidos do diretório.  // <<<<<< SE "aComparar" JA TEM TODOS OS ARQUIVOS, POR QUE NÃO TO USANDO "aComparar" PRA FAZER OS TESTES?
             if (arq == null) {
                 flag = false;
-                System.out.println(paginas.get(i).getTitulo() + " " + "FOI REMOVIDO!!");
+                System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO REMOVIDO!!");
                 removidas.add(paginas.get(i).getTitulo());
                 paginas.remove(i);
             } else {                                             // Pega os arquivos não removidos
-                System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO EXISTEEE");
+                System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO PRESENTE!!");
                 if (paginas.get(i).getInfo() != arq.lastModified()) {
-                    flag = false;                           /* Por que tu ta usando isso aqui cabeça de rola, é só inserir na lista de modificadas*/
-                    paginas.get(i).setIsModified(true); // Verifica quais páginas foram modificadas, e as marca. Para depois ser feita
-                    //a releitura desses arquivos, e a atualização dos nós que tem essas paginas modificadas.
+                    flag = false;
+                    modificadas.add(paginas.get(i).getTitulo());
                 }
             }
         }
         /* TEM QUE ADD NOVOS ARQUIVOS À LISTA DE PAGINAS.*/
         
-        ArrayList<String> modificadas = new ArrayList<>();
-        for (Pagina pag : paginas) {
-            if (pag.isModified()) {
-                modificadas.add(pag.getTitulo());     // Tenho a lista de páginas que foram modificadas.
-            }
-        }
         if(!flag){
             atualizarArvore(removidas, modificadas);
         }
-        // Passar pra
+        
         // AQUI TEM QUE ATUALIZAR A ÁRVORE UTILIZANDO A NOVA LISTA DE PAGINAS.
         return flag;
     }
