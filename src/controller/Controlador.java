@@ -88,10 +88,11 @@ public class Controlador {
         return node;
     }
 
-    private void atualizarNode(File arq, Node node) { // TENTAR DEIXAR "atualizarPalavra" E "atualizarNode" UM SÓ, JÁ QUE FAZEM QUASE A MESMA COISA.
+    private void atualizarNode(Node node, Dados data) { // TENTAR DEIXAR "atualizarPalavra" E "atualizarNode" UM SÓ, JÁ QUE FAZEM QUASE A MESMA COISA.
         int cont = 0;
+        File arquivo = getPagina(data.getTitulo()); 
         try {
-            Scanner input = new Scanner(arq);
+            Scanner input = new Scanner(arquivo);
             while (input.hasNext()) {
                 String linha = input.nextLine();
                 String aux = prepararLinha(linha);
@@ -103,13 +104,7 @@ public class Controlador {
                     }
                 }
             }
-            if (cont != 0) {
-                ArrayList<Dados> a = node.getDados();
-                Dados data = new Dados();
-                data.setTitulo(arq.getName());
-                data.setFrequencia(cont);
-                a.add(data);
-            }
+            data.setFrequencia(cont);
             input.close();
         } catch (FileNotFoundException ex) {
             System.out.println(ex);
@@ -124,16 +119,28 @@ public class Controlador {
         
         while (itr.hasNext()) {                                           
             Node n = itr.next();
-            ArrayList<Dados> d = n.getDados();
+            ArrayList<Dados> dadosPalavra = n.getDados();
             for (int i=0; i < removidas.size();i++) {
                 Dados data = new Dados();
                 data.setTitulo(removidas.get(i));
-                int aux = d.indexOf(data);
+                int aux = dadosPalavra.indexOf(data);
                 if(aux != -1){                          // SE FOR ENCONTRADO O TITULO
-                    d.remove(aux);
+                    dadosPalavra.remove(aux);
                 }
-            }   
+            } 
             /* ATUALIZAR DADOS DOS NODES COM AS PÁGINAS MODIFICADAS.*/
+            for (int i = 0; i < modificadas.size(); i++) {
+                Dados data = new Dados();
+                data.setTitulo(modificadas.get(i));
+                int aux = dadosPalavra.indexOf(data);
+                if(aux != -1){
+                    Dados dado = dadosPalavra.get(aux);
+                    atualizarNode(n,dado);
+                    if(dado.getFrequencia() == 0){
+                        dadosPalavra.remove(aux);               //<<<<<<<<<<<<<<<<<<<< Problema 1 >>>>>>>>>>>>>>>>>>>>>> 
+                    }
+                }
+            }                                        
             /* ATUALIZAR DADOS DOS NODES COM AS PÁGINAS ADICIONADAS.*/
         }
     }
@@ -146,7 +153,7 @@ public class Controlador {
 
         // SE PASSAR DIRETO, É PQ NENHUM ARQUIVO FOI REMOVIDO NEM MODIFICADO.
         for (int i = 0; i < paginas.size(); i++) {
-            File arq = getPagina(paginas.get(i).getTitulo()); // Verifica e tira da lista os arquivos removidos do diretório.  // <<<<<< SE "aComparar" JA TEM TODOS OS ARQUIVOS, POR QUE NÃO TO USANDO "aComparar" PRA FAZER OS TESTES?
+            File arq = getPagina(paginas.get(i).getTitulo());  
             if (arq == null) {
                 flag = false;
                 System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO REMOVIDO!!");
