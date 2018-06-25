@@ -125,14 +125,14 @@ public class Controlador {
         while (itr.hasNext()) {                                           
             Node n = itr.next();
             ArrayList<Dados> d = n.getDados();
-            for (int i=0; i < d.size();i++) {
+            for (int i=0; i < removidas.size();i++) {
                 Dados data = new Dados();
                 data.setTitulo(removidas.get(i));
                 int aux = d.indexOf(data);
                 if(aux != -1){                          // SE FOR ENCONTRADO O TITULO
                     d.remove(aux);
                 }
-                
+            }   
                 /* ATUALIZAR DADOS DO NODE COM AS PÁGINAS MODIFICADAS.*/
                 
                 
@@ -142,8 +142,6 @@ public class Controlador {
                 if(aux != -1){
                     d.remove(aux);
                 }*/
-                
-            }
         }
     }
 
