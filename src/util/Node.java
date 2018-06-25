@@ -36,7 +36,7 @@ public class Node{
         public void setDireita(Node direita) {this.direita = direita;}
         public int getVezesBuscada() {return vezesBuscada;}
         public void incrementVezesBuscada() {this.vezesBuscada++;}
-        public ArrayList<Dados> getDados() {return dados;}
+        public ArrayList<Dados> getListaDados() {return dados;}
         public Iterator listarDados(){return dados.iterator();}
         
         @Override

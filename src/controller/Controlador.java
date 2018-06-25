@@ -28,90 +28,81 @@ public class Controlador {
 
     public Iterator pesquisar(String palavra) {
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
-        if (!verificarIntegridade()) {
-
-        }
-
+        //verificarIntegridade();
+        
         Node ret = tree.encontrar(palavra);        // Ele já entra aqui com o repositório atualizado.
 
         if (ret == null) {
             tree.inserir(palavra);
             ret = tree.encontrar(palavra);  // tentar tirar isso depois
             ret = atualizarPalavra(ret);
-        }
-        if (ret.getDados().isEmpty()) {
-            tree.remover(palavra);
-            return null;
+            if (ret.getListaDados().isEmpty()) {
+                tree.remover(palavra);
+                return null;
+            }
         }
         ret.incrementVezesBuscada();
-        mergeSort.sort(ret.getDados());
+        mergeSort.sort(ret.getListaDados());
         return ret.listarDados();
     }
 
     private Node atualizarPalavra(Node node) {  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;
-        for (Pagina pagina : paginas) {
-            int cont = 0;
-            File arquivo = getPagina(pagina.getTitulo());
+        for (Pagina pagina : paginas){ 
+            if(pagina.isModified() || node.getVezesBuscada() == 0){
+                int cont = 0;
+                File arquivo = getPagina(pagina.getTitulo());
+                try {
+                    Scanner input = new Scanner(arquivo);
+                    while (input.hasNext()) {
+                        String linha = input.nextLine();
 
-            try {
-                Scanner input = new Scanner(arquivo);
-                while (input.hasNext()) {
-                    String linha = input.nextLine();
+                        String aux = prepararLinha(linha);
 
-                    String aux = prepararLinha(linha);
+                        StringTokenizer tkn = new StringTokenizer(aux);
 
-                    StringTokenizer tkn = new StringTokenizer(aux);
+                        while (tkn.hasMoreTokens()) {
+                            String cmp = tkn.nextToken();
 
-                    while (tkn.hasMoreTokens()) {
-                        String cmp = tkn.nextToken();
+                            if (cmp.equalsIgnoreCase(node.getChave())) {
+                                cont++;
+                            }
 
-                        if (cmp.equalsIgnoreCase(node.getChave())) {
-                            cont++;
+                            //System.out.print(cmp+" ");
                         }
-
-                        //System.out.print(cmp+" ");
+                        //System.out.println();
                     }
-                    //System.out.println();
-                }
-                if (cont != 0) { // Se tiver pelo menos 1 ocorrência da palavra no arquivo txt
-                    ArrayList<Dados> a = node.getDados();
                     Dados data = new Dados();
-                    data.setTitulo(arquivo.getName());
-                    data.setFrequencia(cont);
-                    a.add(data);
+                    data.setTitulo(pagina.getTitulo());
+                    int pos = node.getListaDados().indexOf(data);
+                    if (cont != 0) { // Se tiver pelo menos 1 ocorrência da palavra no arquivo txt
+                        if(pos != -1){
+                            Dados aux = node.getListaDados().get(pos);
+                            aux.setFrequencia(cont);
+                        }else{
+                            ArrayList<Dados> a = node.getListaDados();
+                            data.setTitulo(arquivo.getName());
+                            data.setFrequencia(cont);
+                            a.add(data);
+                        }
+                    }else{                                              // SE O CONTADOR FOR 0 E ESSE NÓ TIVER ESSA ESSA PAGINA EM SEUS DADOS, QUER DIZER QUE ANTES TINHA OCORRENCIAS, MAS DEIXOU DE TER. DEVE REMVER ENTÃO ESSA PÁGINA DA LISTA DE DADOS DESSE NÓ.
+                        if(pos != -1){
+                           ArrayList<Dados> a = node.getListaDados();
+                           a.remove(pos);
+                        }
+                    }
+                    input.close();
+                } catch (FileNotFoundException ex) {
+                    System.out.println(ex);
                 }
-                input.close();
-            } catch (FileNotFoundException ex) {
-                System.out.println(ex);
-            }
+                
+            }   
+            
         }
         return node;
     }
 
-    private void atualizarNode(Node node, Dados data) { // TENTAR DEIXAR "atualizarPalavra" E "atualizarNode" UM SÓ, JÁ QUE FAZEM QUASE A MESMA COISA.
-        int cont = 0;
-        File arquivo = getPagina(data.getTitulo()); 
-        try {
-            Scanner input = new Scanner(arquivo);
-            while (input.hasNext()) {
-                String linha = input.nextLine();
-                String aux = prepararLinha(linha);
-                StringTokenizer tkn = new StringTokenizer(aux);
-                while (tkn.hasMoreTokens()) {
-                    String cmp = tkn.nextToken();
-                    if (cmp.equalsIgnoreCase(node.getChave())) {
-                        cont++;
-                    }
-                }
-            }
-            data.setFrequencia(cont);
-            input.close();
-        } catch (FileNotFoundException ex) {
-            System.out.println(ex);
-        }
-    }
-
-    private void atualizarArvore(ArrayList<String> removidas, ArrayList<String> modificadas) {
+    private void atualizarArvore(ArrayList<String> removidas) {
+        ArrayList<String> nosARemover = new ArrayList<>();
         // percorrer a lista de paginas verificando os isModified.
 
         // percorrer árvore procurando nós que tenham dados de páginas que foram removidas.
@@ -119,7 +110,7 @@ public class Controlador {
         
         while (itr.hasNext()) {                                           
             Node n = itr.next();
-            ArrayList<Dados> dadosPalavra = n.getDados();
+            ArrayList<Dados> dadosPalavra = n.getListaDados();
             for (int i=0; i < removidas.size();i++) {
                 Dados data = new Dados();
                 data.setTitulo(removidas.get(i));
@@ -128,45 +119,43 @@ public class Controlador {
                     dadosPalavra.remove(aux);
                 }
             } 
-            /* ATUALIZAR DADOS DOS NODES COM AS PÁGINAS MODIFICADAS.*/
-            for (int i = 0; i < modificadas.size(); i++) {
-                Dados data = new Dados();
-                data.setTitulo(modificadas.get(i));
-                int aux = dadosPalavra.indexOf(data);
-                if(aux != -1){
-                    Dados dado = dadosPalavra.get(aux);
-                    atualizarNode(n,dado);
-                    if(dado.getFrequencia() == 0){
-                        dadosPalavra.remove(aux);               //<<<<<<<<<<<<<<<<<<<< Problema 1 >>>>>>>>>>>>>>>>>>>>>> 
-                    }
-                }
-            }                                        
-            /* ATUALIZAR DADOS DOS NODES COM AS PÁGINAS ADICIONADAS.*/
+            n = atualizarPalavra(n);
+   
+            if(n.getListaDados().isEmpty()){
+                nosARemover.add(n.getChave());
+            }
+        }
+        for(String p: nosARemover){
+            tree.remover(p);
         }
     }
 
-    private boolean verificarIntegridade() {
+    private void verificarIntegridade() {
         boolean flag = true;
 
         ArrayList<String> removidas = new ArrayList<>();
-        ArrayList<String> modificadas = new ArrayList<>();
 
         // SE PASSAR DIRETO, É PQ NENHUM ARQUIVO FOI REMOVIDO NEM MODIFICADO.
         for (int i = 0; i < paginas.size(); i++) {
             File arq = getPagina(paginas.get(i).getTitulo());  
             if (arq == null) {
                 flag = false;
-                System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO REMOVIDO!!");
+                //System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO REMOVIDO!!");
                 removidas.add(paginas.get(i).getTitulo());
-                paginas.remove(i);
             } else {                                             // Pega os arquivos não removidos
-                System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO PRESENTE!!");
+                //System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO PRESENTE!!");
                 if (paginas.get(i).getInfo() != arq.lastModified()) {
                     flag = false;
-                    modificadas.add(paginas.get(i).getTitulo());
+                    paginas.get(i).setModified(true);
                 }
             }
         }
+        for (String pag: removidas) {
+            Pagina p = new Pagina();
+            p.setTitulo(pag);
+            paginas.remove(p); 
+        }
+        
         /* TEM QUE ADD NOVOS ARQUIVOS À LISTA DE PAGINAS.*/
         ArrayList<Pagina> aComparar = new ArrayList();
         aComparar = files.passarArqParaPaginas(aComparar, files.obterRepositorio());
@@ -180,19 +169,18 @@ public class Controlador {
                 Pagina p = new Pagina();
                 p.setTitulo(aComparar.get(i).getTitulo());
                 if(!paginas.contains(p)){
+                    flag = false;
                     p.setTitulo(aComparar.get(i).getTitulo());
                     p.setInfo(aComparar.get(i).getInfo());
+                    p.setModified(true);
                     paginas.add(p);
                 }
             }
         }
         
         if(!flag){
-            atualizarArvore(removidas, modificadas);
+            atualizarArvore(removidas);
         }
-        
-        // AQUI TEM QUE ATUALIZAR A ÁRVORE UTILIZANDO A NOVA LISTA DE PAGINAS.
-        return flag;
     }
 
     private boolean verificarMultiPalavras(String palavra) {

@@ -26,7 +26,7 @@ class Testes {
        // Arquivos man = new Arquivos();
         Scanner input = new Scanner(System.in);
         String op = null;
-
+        
 
         ArrayList<Pagina> paginas = new ArrayList<>();
 

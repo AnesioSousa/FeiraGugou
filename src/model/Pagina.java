@@ -10,6 +10,7 @@ public class Pagina implements Comparable<Pagina>{
     private String titulo;
     private int vezesAcessada;
     private long info;
+    private boolean modified;
 
     public String getTitulo() {return titulo;}
     public void setTitulo(String titulo) {this.titulo = titulo;}
@@ -17,6 +18,9 @@ public class Pagina implements Comparable<Pagina>{
     public void setVezesAcessada(int vezesAcessada) {this.vezesAcessada = vezesAcessada;}
     public long getInfo() {return info;}
     public void setInfo(long info) {this.info = info;}
+    public boolean isModified() {return modified;}
+    public void setModified(boolean modified) {this.modified = modified;}
+    
 
     @Override
     public boolean equals(Object obj) {
