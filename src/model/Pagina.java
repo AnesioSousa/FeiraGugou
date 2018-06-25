@@ -21,7 +21,7 @@ public class Pagina implements Comparable<Pagina>{
     public boolean isModified() {return isModified;}
     public void setIsModified(boolean isModified) {this.isModified = isModified; }
 
-    /*@Override
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -31,12 +31,12 @@ public class Pagina implements Comparable<Pagina>{
         }
         if (obj instanceof Pagina) {
             Pagina a = (Pagina) obj;
-            if(this.frequencia == a.getOcorrencias()){
+            if (this.getTitulo().equals(a.getTitulo())) {
                 return true;
             }
         }
         return false;
-    }*/  
+    }
 
     @Override
     public int compareTo(Pagina o) {

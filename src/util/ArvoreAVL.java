@@ -244,13 +244,13 @@ public class ArvoreAVL {
     
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< FAZERRRRRRRRRRRRRRRRRRRRRRR TEEEEEEEESSSTEEEEESS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Returns as iterator to traverse the tree in order.
-    public java.util.Iterator<String> iterator () {
+    public java.util.Iterator<Node> iterator () {
 
         final int expectedNodeCount = tam;
         final java.util.Stack<Node> stack = new java.util.Stack<>();
         stack.push(raiz);
 
-        return new java.util.Iterator<String> () {
+        return new java.util.Iterator<Node> () {
             Node trav = raiz;
             @Override 
             public boolean hasNext() {
@@ -258,7 +258,7 @@ public class ArvoreAVL {
                 return raiz != null && !stack.isEmpty();
             }
             @Override 
-            public String next () {
+            public Node next () {
                 if (expectedNodeCount != tam) throw new java.util.ConcurrentModificationException();
 
                 while(trav != null && trav.getEsquerda() != null) {
@@ -273,7 +273,7 @@ public class ArvoreAVL {
                     trav = node.getDireita();
                 }
 
-                return node.getChave();
+                return node;
             }      
         };
     }

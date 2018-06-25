@@ -21,11 +21,36 @@ import util.*;
  */
 class Testes {
     public static void main(String[] args) {
-       // ArvoreAVL tree = new ArvoreAVL();
+        //ArvoreAVL tree = new ArvoreAVL();
         Controlador ctr = new Controlador();
        // Arquivos man = new Arquivos();
         Scanner input = new Scanner(System.in);
         String op = null;
+
+
+        ArrayList<Pagina> paginas = new ArrayList<>();
+
+        while( !"sair".equals(op)){
+            System.out.printf("Digite a palavra: ");
+            String palavra = input.nextLine();
+
+            Iterator<Dados> itr = ctr.pesquisar(palavra);
+            if(itr == null){
+                System.out.println("Não foi achado!");
+            }else{
+                while(itr.hasNext()){
+                Dados data = itr.next();
+                System.out.println(data);
+                }
+            }
+     
+            System.out.println("Deseja sair?");
+            op = input.nextLine();
+        }
+    }
+}    
+
+
         //ArrayList<File> arquivos = man.obter();
         //ArrayList<Pagina> paginas = new ArrayList<>();
        // MergeSort m = new MergeSort();
@@ -82,27 +107,8 @@ class Testes {
         for(Pagina p: paginas){
             System.out.println(p);
         }*/
-        
-
-        
-        while( !"sair".equals(op)){
-            System.out.printf("Digite a palavra: ");
-            String palavra = input.nextLine();
-
-            Iterator<Dados> itr = ctr.pesquisar(palavra);
-            if(itr == null){
-                System.out.println("Não foi achado!");
-            }else{
-                while(itr.hasNext()){
-                Dados a = itr.next();
-                System.out.println(a);
-                }
-            }
-     
-            System.out.println("Deseja sair?");
-            op = input.nextLine();
-        }
-        /*Iterator<Pagina> itr = ctr.getPaginas();
+//===============================================================================================================================\\
+    /*Iterator<Pagina> itr = ctr.listarPaginas();
         
         while(itr.hasNext()){
             Pagina a = itr.next();
@@ -121,7 +127,7 @@ class Testes {
         /*input.nextLine();
         
         System.out.println(verificarIntegridade(arquivos));*/
-    }
+//=================================================================================================================================\\
     
      /*private static boolean verificarIntegridade(File[] arquivos) {
         Arquivos man = new Arquivos();
@@ -145,4 +151,3 @@ class Testes {
         
         return Arrays.equals(auxiliar, aComparar);
     }*/
-}
