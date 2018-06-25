@@ -168,6 +168,24 @@ public class Controlador {
             }
         }
         /* TEM QUE ADD NOVOS ARQUIVOS À LISTA DE PAGINAS.*/
+        ArrayList<Pagina> aComparar = new ArrayList();
+        aComparar = files.passarArqParaPaginas(aComparar, files.obterRepositorio());
+        
+        mergeSort.sort(paginas);
+        mergeSort.sort(aComparar);
+        
+        if(paginas.size() < aComparar.size()){
+            
+            for (int i = 0; i < aComparar.size(); i++) {
+                Pagina p = new Pagina();
+                p.setTitulo(aComparar.get(i).getTitulo());
+                if(!paginas.contains(p)){
+                    p.setTitulo(aComparar.get(i).getTitulo());
+                    p.setInfo(aComparar.get(i).getInfo());
+                    paginas.add(p);
+                }
+            }
+        }
         
         if(!flag){
             atualizarArvore(removidas, modificadas);
