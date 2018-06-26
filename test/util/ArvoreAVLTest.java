@@ -1,5 +1,6 @@
 package util;
 
+import java.util.Iterator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,7 +8,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author anesio
+ * @author Anésio Sousa
  */
 public class ArvoreAVLTest {
 
@@ -310,5 +311,34 @@ public class ArvoreAVLTest {
         assertEquals(esperado, resultado.getChave());                   // É verificado o estado da raiz;
 
     }
-
+    
+    /**
+     * Teste do método iterator, da classe ArvoreAVL.
+     */
+    @Test
+    public void testIterator(){
+        System.out.println("iterator");
+        ArvoreAVL tree = new ArvoreAVL();
+        
+        tree.inserir("Naruto");
+        tree.inserir("Sasuke");
+        tree.inserir("Tsunade");
+        tree.inserir("Akatsuki");
+        
+        String[] vetor = new String[4];
+        
+        int i = 0;
+        Iterator<Node> itr = tree.iterator();
+        while(itr.hasNext()){
+            Node n = itr.next();
+            vetor[i] = n.getChave();
+            i++;
+        }
+        
+        assertEquals(vetor[0], "Akatsuki");
+        assertEquals(vetor[1], "Naruto");
+        assertEquals(vetor[2], "Sasuke");
+        assertEquals(vetor[3], "Tsunade");
+        
+    }
 }
