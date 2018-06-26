@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
- * 
+ * Classe que cria objetos que são capazes de ordenar ArrayLists.
  * @author Anésio Sousa
  * @param <T> tipo genérico.
  */

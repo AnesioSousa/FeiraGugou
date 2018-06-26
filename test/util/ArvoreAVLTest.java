@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
+ * Testes da classe ArvoreAVL.
  * @author Anésio Sousa
  */
 public class ArvoreAVLTest {

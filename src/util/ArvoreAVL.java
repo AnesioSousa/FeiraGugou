@@ -6,7 +6,7 @@
 package util;
 
 /**
- *
+ * Classe que gera objetos do tipo Árvore Binária de Busca Balanceada
  * @author William Fiset - 80 % do código. 
  * @author Anésio Sousa - 20 % do código.
  */

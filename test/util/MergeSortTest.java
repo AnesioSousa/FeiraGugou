@@ -6,7 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
+ * Testes da classe MergeSort.
  * @author Anésio Sousa
  */
 public class MergeSortTest {
