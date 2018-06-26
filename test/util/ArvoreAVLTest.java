@@ -25,7 +25,6 @@ public class ArvoreAVLTest {
      */
     @Test
     public void testInserir() {
-        System.out.println("inserir");
         String chave = "anesio";
         ArvoreAVL tree = new ArvoreAVL();
 
@@ -65,7 +64,6 @@ public class ArvoreAVLTest {
      */
     @Test
     public void testRemover() {
-        System.out.println("remover");
         String chave = "anesio";
         ArvoreAVL tree = new ArvoreAVL();
         tree.inserir(chave);
@@ -141,7 +139,6 @@ public class ArvoreAVLTest {
      */
     @Test
     public void testContains() {
-        System.out.println("contains");
         String chave = "anesio";
         ArvoreAVL tree = new ArvoreAVL();
         tree.inserir(chave);                      // Adiciona um nó para testes;
@@ -166,7 +163,6 @@ public class ArvoreAVLTest {
      */
     @Test
     public void testAltura() {
-        System.out.println("altura");
         String chave = "anesio";
         ArvoreAVL tree = new ArvoreAVL();
         tree.inserir(chave);                 // Insere um nó na raiz;
@@ -193,7 +189,6 @@ public class ArvoreAVLTest {
      */
     @Test
     public void testTamanho() {
-        System.out.println("tamanho");
         ArvoreAVL tree = new ArvoreAVL();
 
         int esperado = 0;
@@ -236,7 +231,6 @@ public class ArvoreAVLTest {
      */
     @Test
     public void testIsEmpty() {
-        System.out.println("isEmpty");
         ArvoreAVL tree = new ArvoreAVL();
 
         boolean esperado = true;
@@ -259,40 +253,37 @@ public class ArvoreAVLTest {
         resultado = tree.isEmpty();
         assertEquals(esperado, resultado);                             // Verifica se a árvore está vazia;
     }
-    
+
     /**
      * Teste do método encontrar, da classe ArvoreAVL.
      */
     @Test
     public void testEncontrar() {
-        System.out.println("encontrar");
         ArvoreAVL tree = new ArvoreAVL();
         String chave = "anesio";
         tree.inserir(chave);
-        
+
         String esperado = "anesio";
         Node resultado = tree.encontrar(chave);
         assertEquals(esperado, resultado.getChave());
-        
+
         String[] vila = new String[]{"chaves", "chiquinha", "kiko"};
-        
+
         for (String personagem : vila) {
-            tree.inserir(personagem);                                  
+            tree.inserir(personagem);
         }
-        
+
         chave = "kiko";
         esperado = "kiko";
         resultado = tree.encontrar(chave);
         assertEquals(esperado, resultado.getChave());
     }
-    
-    
+
     /**
      * Teste do método getRaiz, da classe ArvoreAVL.
      */
     @Test
     public void testGetRaiz() {
-        System.out.println("getRaiz");
         ArvoreAVL tree = new ArvoreAVL();
 
         String esperado = null;                                        // Nada é inserido na árvore;
@@ -311,34 +302,33 @@ public class ArvoreAVLTest {
         assertEquals(esperado, resultado.getChave());                   // É verificado o estado da raiz;
 
     }
-    
+
     /**
      * Teste do método iterator, da classe ArvoreAVL.
      */
     @Test
-    public void testIterator(){
-        System.out.println("iterator");
+    public void testIterator() {
         ArvoreAVL tree = new ArvoreAVL();
-        
+
         tree.inserir("Naruto");
         tree.inserir("Sasuke");
         tree.inserir("Tsunade");
         tree.inserir("Akatsuki");
-        
+
         String[] vetor = new String[4];
-        
+
         int i = 0;
         Iterator<Node> itr = tree.iterator();
-        while(itr.hasNext()){
+        while (itr.hasNext()) {
             Node n = itr.next();
             vetor[i] = n.getChave();
             i++;
         }
-        
+
         assertEquals(vetor[0], "Akatsuki");
         assertEquals(vetor[1], "Naruto");
         assertEquals(vetor[2], "Sasuke");
         assertEquals(vetor[3], "Tsunade");
-        
+
     }
 }

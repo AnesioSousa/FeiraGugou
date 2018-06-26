@@ -28,7 +28,7 @@ class Testes {
         String op = null;
         
         ArrayList<Pagina> paginas = new ArrayList<>();
-
+        
         while( !"sair".equals(op)){
             System.out.printf("Digite a palavra: ");
             String palavra = input.nextLine();
