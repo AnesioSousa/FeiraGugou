@@ -17,18 +17,23 @@ import util.*;
  */
 public class Controlador {
 
-    private Arquivos files = new Arquivos();
-    private MergeSort mergeSort = new MergeSort();
-    public ArvoreAVL tree = new ArvoreAVL();
-    private ArrayList<Pagina> paginas = new ArrayList<>();
+    private Arquivos files;
+    private MergeSort mergeSort;
+    public ArvoreAVL tree;   // LEMBRAR DE DEIXAR PRIVATE!!!!!!!!!!!!!!!!!!!!!
+    private ArrayList<Pagina> paginas;
+    private Node atual;
 
     public Controlador() {
+        this.files = new Arquivos();
+        this.mergeSort = new MergeSort();
+        this.tree = new ArvoreAVL();
+        this.paginas = new ArrayList<>(); 
         this.paginas = files.passarArqParaPaginas(paginas, files.obterRepositorio());
     }
 
     public Iterator pesquisar(String palavra) {
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
-        //verificarIntegridade();
+        verificarIntegridade();
         
         Node ret = tree.encontrar(palavra);        // Ele já entra aqui com o repositório atualizado.
 
@@ -42,7 +47,10 @@ public class Controlador {
             }
         }
         ret.incrementVezesBuscada();
+        atual = ret;
         mergeSort.sort(ret.getListaDados());
+        
+        
         return ret.listarDados();
     }
 
@@ -215,7 +223,41 @@ public class Controlador {
         }
         return null;
     }
+    
+    public void listarResultadosEmOrdemCrescente() { // REVER ISSOOOO...
+        if (atual != null) {
+            Comparator<Dados> comp = new Comparator<Dados>() {
+                @Override
+                public int compare(Dados o1, Dados o2) {
+                    if (o1.getFrequencia() > o2.getFrequencia()) {
+                        return 1;
+                    }
+                    if (o1.getFrequencia() < o2.getFrequencia()) {
+                        return -1;
+                    }
+                    return 0;
+                }
 
+            };
+            mergeSort.sort(atual.getListaDados(), comp);
+        }
+    }
+    
+    public void listarResultadosEmOrdemDecrescente(){ // REVER ISSOOOO...
+        if (atual != null) {
+            mergeSort.sort(atual.getListaDados());
+        }
+        
+    }
+
+    public Iterator topKMais(){  // Fazer pra palavra e pra página
+        return null;
+    }
+    
+    public Iterator topKMenos(){// Fazer pra palavra e pra página
+        return null;
+    }
+    
     public Iterator listarPaginas() {
         return paginas.iterator();
     }

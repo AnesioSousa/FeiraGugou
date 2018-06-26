@@ -44,6 +44,6 @@ public class Dados implements Comparable<Dados> {
         if (this.getFrequencia() < o.getFrequencia()) {
             return - -1;
         }
-        return 0;/*this.titulo.compareTo(o.titulo);*/ // Só de exemplo. A ordem natural de paǵinas deve ser por relevancia, ou seja, por ocorrencia da palavra
+        return 0;
     }
 }

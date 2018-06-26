@@ -27,7 +27,6 @@ class Testes {
         Scanner input = new Scanner(System.in);
         String op = null;
         
-
         ArrayList<Pagina> paginas = new ArrayList<>();
 
         while( !"sair".equals(op)){
@@ -46,6 +45,13 @@ class Testes {
      
             System.out.println("Deseja sair?");
             op = input.nextLine();
+            /*System.out.println("(1) - Para exibir resultados em ordem crescente");
+            System.out.println("(2) - Para exibir resultados em ordem decrescente");
+            int i = input.nextInt();
+            switch(i){
+                case 1: ctr.listarResultadosEmOrdemCrescente(); break;
+                case 2: ctr.listarResultadosEmOrdemDecrescente(); break;
+            }*/
         }
     }
 }    
