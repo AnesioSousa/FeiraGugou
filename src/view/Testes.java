@@ -32,14 +32,13 @@ class Testes {
         while( !"sair".equals(op)){
             System.out.printf("Digite a palavra: ");
             String palavra = input.nextLine();
-
-            Iterator<Dados> itr = ctr.pesquisar(palavra);
-            if(itr == null){
+            
+            ArrayList ret = ctr.pesquisar(palavra, false);
+            if(ret == null){
                 System.out.println("Não foi achado!");
             }else{
-                while(itr.hasNext()){
-                Dados data = itr.next();
-                System.out.println(data);
+                for(Object d: ret){
+                    System.out.println(d);
                 }
             }
      
@@ -50,7 +49,7 @@ class Testes {
             int i = input.nextInt();
             switch(i){
                 case 1: ctr.listarResultadosEmOrdemCrescente(); break;
-                case 2: ctr.listarResultadosEmOrdemDecrescente(); break;
+                case 2: ctr.listarDecrescente(); break;
             }*/
         }
     }

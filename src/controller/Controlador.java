@@ -20,19 +20,20 @@ public class Controlador {
 
     private Arquivos files;
     private MergeSort mergeSort;
-    public ArvoreAVL tree;   // LEMBRAR DE DEIXAR PRIVATE!!!!!!!!!!!!!!!!!!!!!
+    private ArrayList<Dados> infoPalavras;
+    private ArvoreAVL tree;
     private ArrayList<Pagina> paginas;
-    private Node atual;
 
     public Controlador() {
         this.files = new Arquivos();
         this.mergeSort = new MergeSort();
+        this.infoPalavras = new ArrayList<>();
         this.tree = new ArvoreAVL();
         this.paginas = new ArrayList<>(); 
         this.paginas = files.passarArqParaPaginas(paginas, files.obterRepositorio());
     }
 
-    public Iterator pesquisar(String palavra) {
+    public ArrayList pesquisar(String palavra, boolean invertido) { // REVER ISSO DEPOIS!!!
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
         verificarIntegridade();
         
@@ -48,11 +49,16 @@ public class Controlador {
             }
         }
         ret.incrementVezesBuscada();
-        atual = ret;
-        mergeSort.sort(ret.getListaDados());
         
+        atualizarTopKPalavras(ret);
+
+        if(invertido){
+            inverter(ret.getListaDados());
+        }else{
+            mergeSort.sort(ret.getListaDados());
+        }
         
-        return ret.listarDados();
+        return ret.getListaDados();
     }
 
     private Node atualizarPalavra(Node node) {  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;
@@ -86,11 +92,11 @@ public class Controlador {
                     if (cont != 0) { // Se tiver pelo menos 1 ocorrência da palavra no arquivo txt
                         if(pos != -1){
                             Dados aux = node.getListaDados().get(pos);
-                            aux.setFrequencia(cont);
+                            aux.setQuantidade(cont);
                         }else{
                             ArrayList<Dados> a = node.getListaDados();
                             data.setTitulo(arquivo.getName());
-                            data.setFrequencia(cont);
+                            data.setQuantidade(cont);
                             a.add(data);
                         }
                     }else{                                              // SE O CONTADOR FOR 0 E ESSE NÓ TIVER ESSA ESSA PAGINA EM SEUS DADOS, QUER DIZER QUE ANTES TINHA OCORRENCIAS, MAS DEIXOU DE TER. DEVE REMVER ENTÃO ESSA PÁGINA DA LISTA DE DADOS DESSE NÓ.
@@ -225,42 +231,44 @@ public class Controlador {
         return null;
     }
     
-    public void listarResultadosEmOrdemCrescente() { // REVER ISSOOOO...
-        if (atual != null) {
-            Comparator<Dados> comp = new Comparator<Dados>() {
-                @Override
-                public int compare(Dados o1, Dados o2) {
-                    if (o1.getFrequencia() > o2.getFrequencia()) {
-                        return 1;
-                    }
-                    if (o1.getFrequencia() < o2.getFrequencia()) {
-                        return -1;
-                    }
-                    return 0;
+    private void inverter(ArrayList<Dados> lista) { // REVER ISSOOOO...
+        Comparator<Dados> comp = new Comparator<Dados>() {
+            @Override
+            public int compare(Dados o1, Dados o2) {
+                if (o1.getQuantidade() > o2.getQuantidade()) {
+                    return 1;
                 }
+                if (o1.getQuantidade() < o2.getQuantidade()) {
+                    return -1;
+                }
+                return 0;
+            }
 
-            };
-            mergeSort.sort(atual.getListaDados(), comp);
-        }
+        };
+        mergeSort.sort(lista, comp);
     }
     
-    public void listarResultadosEmOrdemDecrescente(){ // REVER ISSOOOO...
-        if (atual != null) {
-            mergeSort.sort(atual.getListaDados());
-        }
+    // REVER E TESTAR ISSO.
+    public ArrayList topKMaisPalavra(int qtd){  // Fazer pra palavra e pra página // FAZER EXCEÇÃO DE QUE SE O USUÁRIO QUISER UM TOP (TAMANHO) MAIOR DO QUE O NÚMERO DE ELEMENTOS.
         
+        return (ArrayList) infoPalavras.subList(0, qtd);  
     }
-
-    public Iterator topKMais(){  // Fazer pra palavra e pra página
-        return null;
-    }
-    
-    public Iterator topKMenos(){// Fazer pra palavra e pra página
-        return null;
+    // REVER E TESTAR ISSO.
+    public ArrayList topKMenosPalavra(int qtd){// Fazer pra palavra e pra página
+        
+        return (ArrayList) infoPalavras.subList(infoPalavras.size(), qtd);
     }
     
     public Iterator listarPaginas() {
         return paginas.iterator();
+    }
+    // REVER E TESTAR ISSO.
+    private void atualizarTopKPalavras(Node node) {
+        Dados p = new Dados();
+        p.setTitulo(node.getChave());
+        p.setQuantidade(node.getVezesBuscada());
+        infoPalavras.add(p);
+        mergeSort.sort(infoPalavras);
     }
 
 }

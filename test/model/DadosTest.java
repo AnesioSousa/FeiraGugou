@@ -28,13 +28,13 @@ public class DadosTest {
     @Test
     public void testBasic() {
         d.setTitulo("Como fazer bolo de cenoura");
-        d.setFrequencia(12);
+        d.setQuantidade(12);
         assertEquals("Como fazer bolo de cenoura", d.getTitulo());
-        assertSame(12, d.getFrequencia());
+        assertSame(12, d.getQuantidade());
 
         Dados temp = new Dados();
         temp.setTitulo("Temperando a vida!");
-        temp.setFrequencia(7);
+        temp.setQuantidade(7);
         assertFalse(d.equals(temp));
         temp.setTitulo("Como fazer bolo de cenoura");
         assertTrue(d.equals(temp));

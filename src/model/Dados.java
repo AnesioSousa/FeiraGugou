@@ -8,35 +8,35 @@ package model;
 public class Dados implements Comparable<Dados> {
 
     private String titulo;
-    private int frequencia;
+    private int quantidade;
 
     /**
-     * Retorna o título da página que esse objeto dados armazena.
+     * Retorna o título que esse objeto dados armazena.
      * @return string contendo o título.
      */
     public String getTitulo() {return titulo;}
 
     /**
-     * Dita qual titulo de página esse objeto dados irá passar a armazenar.
+     * Dita qual titulo esse objeto dados irá passar a armazenar.
      * @param titulo string contendo o título.
      */
     public void setTitulo(String titulo) {this.titulo = titulo;}
 
     /**
-     * Retorna a frequência de uma palavra em determinada página.
-     * @return int contendo a frequencia.
+     * Retorna o valor quantidade.
+     * @return int contendo a quantidade.
      */
-    public int getFrequencia() {return frequencia;}
+    public int getQuantidade() {return quantidade;}
 
     /**
-     * Dita qual frequencia esse objeto dados irá passar a armazenar.
-     * @param frequencia
+     * Dita qual quantidade esse objeto dados irá passar a armazenar.
+     * @param quantidade
      */
-    public void setFrequencia(int frequencia) {this.frequencia = frequencia;}
+    public void setQuantidade(int quantidade) {this.quantidade = quantidade;}
 
     @Override
     public String toString() {
-        return "Dados{" + "titulo=" + titulo + ", frequencia=" + frequencia + '}';
+        return "Dados{" + "titulo=" + titulo + ", quantidade=" + quantidade + '}';
     }
 
     @Override
@@ -58,10 +58,10 @@ public class Dados implements Comparable<Dados> {
 
     @Override
     public int compareTo(Dados o) {
-        if (this.getFrequencia() > o.getFrequencia()) {
+        if (this.getQuantidade() > o.getQuantidade()) {
             return - 1;
         }
-        if (this.getFrequencia() < o.getFrequencia()) {
+        if (this.getQuantidade() < o.getQuantidade()) {
             return - -1;
         }
         return 0;
