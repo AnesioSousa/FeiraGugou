@@ -3,6 +3,7 @@ package util;
 import java.util.Iterator;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import util.ArvoreAVL.Node;
 
 /**
  * Testes da classe ArvoreAVL.

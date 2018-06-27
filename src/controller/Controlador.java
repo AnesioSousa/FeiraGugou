@@ -10,10 +10,11 @@ import java.util.StringTokenizer;
 import java.util.regex.*;
 import model.*;
 import util.*;
+import util.ArvoreAVL.Node;
 
 /**
  *
- * @author Anésio
+ * @author Anésio Sousa
  */
 public class Controlador {
 
