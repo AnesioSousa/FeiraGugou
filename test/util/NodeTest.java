@@ -12,13 +12,17 @@ import static org.junit.Assert.*;
 public class NodeTest {
     Node n1;
 
+    /**
+     * Este método é executado antes de cada teste de unidade (testes a seguir), 
+     * e serve para inicializar objetos que são utilizados nos testes.
+     */
     @Before
     public void setUp() {
         n1 = new Node("Anésio");
     }
 
     /**
-     * Testes dos atributos da classe Node.
+     * Testes de manipulação de atributos da classe Node.
      */
     @Test
     public void testBasic() {

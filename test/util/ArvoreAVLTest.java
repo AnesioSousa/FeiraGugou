@@ -1,8 +1,6 @@
 package util;
 
 import java.util.Iterator;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -11,15 +9,6 @@ import static org.junit.Assert.*;
  * @author Anésio Sousa
  */
 public class ArvoreAVLTest {
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
     /**
      * Teste do método inserir, da classe ArvoreAVL.
      */
