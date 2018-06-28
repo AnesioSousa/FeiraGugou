@@ -1,6 +1,7 @@
 package view;
 
 import controller.Controlador;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -12,11 +13,13 @@ public class ConsoleView {
 
     private static Controlador control = new Controlador();
 
-    public static void main(String[] args) {
-        boolean opcao = true;
+    public static void main(String[] args) throws IOException {
+        final int TAMANHO_MENU = 80;
+        int opcao = 0;
         Scanner input = new Scanner(System.in);
 
         do {
+            menuPrincipal(TAMANHO_MENU);
             System.out.printf("Digite a palavra: ");
             String palavra = input.nextLine();
             ArrayList ret = control.pesquisar(palavra);
@@ -27,18 +30,133 @@ public class ConsoleView {
                     System.out.println(d);
                 }
             }
-            System.out.println("(1) - Ordenar Crescente");
-            String i = input.nextLine();
             
             System.out.println("Deseja sair?");
-            String p = input.nextLine();
-            
-            int a = Integer.parseInt(p);
-            if(a == 1)
-                opcao = false;
+            opcao = Console.readInt();
+        }while(opcao != 1);
+    }
+    
+    private static void menuPrincipal(int tamanho) {
+        barra(tamanho, true);
+        textoSimples(tamanho, "BlackJack", true, true);
+        separador(tamanho, true);
+        novoItem(tamanho, "Novo jogador", "1", true);
+        novoItem(tamanho, "Iniciar partida", "2", true);
+        novoItem(tamanho, "Recarregar", "3", true);
+        novoItem(tamanho, "Recordes", "4", true);
+        novoItem(tamanho, "Regras", "5", true);
+        separador(tamanho, true);
+        novoItem(tamanho, "Sair", "6", true);
+        barra(tamanho, true);
+    }
+    
+    private static void barra(int tamanho, boolean pulaLinha) {
+        System.out.print("+");
+        for (int i = 0; i < tamanho; i++) {
+            System.out.print("=");
+        }
+        if (pulaLinha) {
+            System.out.println("+");
+        } else {
+            System.out.print("+");
+        }
+    }
+    
+    private static void textoSimples(int tamanho, String texto, boolean centralizar, boolean pulaLinha) {
+        int tamanhoDaBarra = tamanho - texto.length();
+        int espacosDaEsquerda, espacosDaDireita;
+        espacosDaEsquerda = centralizar ? tamanhoDaBarra / 2 : 1;
+        espacosDaDireita = tamanhoDaBarra - espacosDaEsquerda;
+        fazTraco(espacosDaEsquerda, ' ', true, false);
+        System.out.print(texto);
+        fazTraco(espacosDaDireita, ' ', false, pulaLinha);
+    }
+    
+    private static void separador(int tamanho, boolean comTraco) {
+        char lateral = '|', meio = ' ';
+        if (comTraco == true) {
+            lateral = '+';
+            meio = '=';
+        }
+        System.out.print(lateral);
+        fazTraco(tamanho, meio, false, false);
+        System.out.println(lateral);
+    }
+    
+    private static void novoItem(int tamanho, String item, String pesoDoItem, boolean pulaLinha) {
 
-            
-        }while(opcao);
+        int qtdDeTracos = ((tamanho - item.length()) - (pesoDoItem.length() + 4));
+        if (pesoDoItem.length() == 1) {
+            qtdDeTracos--;
+        }
+        System.out.print("| " + item);
+        fazTraco(qtdDeTracos, '.', false, false);
+        pesoDoItem = (pesoDoItem.length() >= 2) ? "(" + pesoDoItem + ")" : "(0" + pesoDoItem + ")";
+        System.out.print(pesoDoItem);
+        if (pulaLinha) {
+            System.out.println(" |");
+        } else {
+            System.out.print(" |");
+        }
+
+    }
+    
+     private static void mensagem(int tamanho, String mensagem, boolean poemEscolha) {
+        barra(tamanho, true);
+        textoSimples(tamanho, mensagem, true, true);
+        if (poemEscolha) {
+            textoDuplo(tamanho, "Sim__(01)", true, "Não__(02)", true);
+        }
+        barra(tamanho, true);
+
     }
 
+    private static String fazTraco(int tamanho, char estilo, boolean bordaE, boolean bordaD) {
+        String s = "";
+        if (bordaE) {
+            System.out.print("|");
+        }
+        for (int i = 0; i < tamanho; i++) {
+            System.out.print(estilo);
+            s += estilo;
+        }
+        if (bordaD) {
+            System.out.println("|");
+        }
+        return s;
+    }
+    
+    private static void textoDuplo(int tamanho, String txt1, boolean cTxt1, String txt2, boolean cTxt2) {
+        textoSimples(tamanho / 2 - 1, txt1, cTxt1, false);
+        textoSimples(tamanho / 2, txt2, cTxt2, true);
+    }
+    
+    private static int lerInt(boolean limite, int min, int max) {
+        Scanner input = new Scanner(System.in);
+        int valor;
+        boolean repetir;
+        do {
+            try {
+                valor = input.nextInt();
+                input.nextLine();
+                if ((limite && max == 0) && (valor >= min)) {
+                    return valor;
+                } else if (limite) {
+                    if (valor >= min && valor <= max) {
+                        return valor;
+                    } else {
+                        System.out.print("Digite um valor entre: " + min + " e " + max + ": ");
+                        repetir = true;
+                    }
+                } else {
+                    return valor;
+                }
+
+            } catch (Exception e) {
+                input.nextLine();
+                repetir = true;
+            }
+        } while (repetir);
+        return 0;
+    }
 }
