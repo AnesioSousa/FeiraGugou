@@ -33,7 +33,7 @@ public class Controlador {
         this.paginas = files.passarArqParaPaginas(paginas, files.obterRepositorio());
     }
 
-    public ArrayList pesquisar(String palavra, boolean invertido) { // REVER ISSO DEPOIS!!!
+    public ArrayList pesquisar(String palavra/*, boolean invertido*/) { // REVER ISSO DEPOIS!!!
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
         verificarIntegridade();
         
@@ -52,12 +52,12 @@ public class Controlador {
         
         atualizarTopKPalavras(ret);
 
-        if(invertido){
+        /*if(invertido){
             inverter(ret.getListaDados());
         }else{
             mergeSort.sort(ret.getListaDados());
-        }
-        
+        }*/
+        mergeSort.sort(ret.getListaDados());
         return ret.getListaDados();
     }
 
@@ -259,8 +259,8 @@ public class Controlador {
         return (ArrayList) infoPalavras.subList(infoPalavras.size(), qtd);
     }
     
-    public Iterator listarPaginas() {
-        return paginas.iterator();
+    public ArrayList listarPaginas() {
+        return paginas;
     }
     // REVER E TESTAR ISSO.
     private void atualizarTopKPalavras(Node node) {

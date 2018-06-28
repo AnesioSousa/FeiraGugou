@@ -33,7 +33,7 @@ class Testes {
             System.out.printf("Digite a palavra: ");
             String palavra = input.nextLine();
             
-            ArrayList ret = ctr.pesquisar(palavra, false);
+            ArrayList ret = ctr.pesquisar(palavra);
             if(ret == null){
                 System.out.println("Não foi achado!");
             }else{
