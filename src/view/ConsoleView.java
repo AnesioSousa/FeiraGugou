@@ -28,12 +28,13 @@ public class ConsoleView {
                 }
             }
             System.out.println("(1) - Ordenar Crescente");
-            int i = input.nextInt();
+            String i = input.nextLine();
             
             System.out.println("Deseja sair?");
-            int p = input.nextInt();
+            String p = input.nextLine();
             
-            if(p == 1)
+            int a = Integer.parseInt(p);
+            if(a == 1)
                 opcao = false;
 
             

@@ -1,13 +1,10 @@
-/* Essa árvore foi criada por William Fiset. Fiz alterações e adicionei métodos para satisfazer
- * a resolução do problema.
+/* Essa árvore foi criada por William Fiset. Fiz alterações e adicionei métodos para satisfazer a resolução do problema.
  * O código dele pode ser encontrado em: <https://github.com/williamfiset/data-structures/blob/master/com/williamfiset/datastructures/balancedtree/AVLTreeRecursive.java>
  * Segue o vídeo onde ele fala sobre a árvore: <https://www.youtube.com/watch?v=tqFZzXkbbGY> acessado em: 17 junho 2018
  */
 package util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import model.Dados;
+import model.Palavra;
 
 /**
  * Classe que gera objetos do tipo Árvore Binária de Busca Balanceada
@@ -26,40 +23,35 @@ public class ArvoreAVL {
      */
     public class Node {
 
-        private String chave;
+        private Palavra key;
         private int altura;
         private int fator;
         private Node esquerda;
         private Node direita;
-        private int vezesBuscada;
-        private ArrayList<Dados> dados;
 
         /**
-         * Construtor da classe Node. Recebe uma string para ser seu dado chave, e inicializa os atributos da classe Node.
-         *
-         * @param data dado para ser a chave do nó criado.
+         * Construtor da classe Node. Recebe um objeto palavra para ser seu dado key, e inicializa os atributos da classe Node.
+         * @param data dado para ser a key do nó criado.
          */
-        public Node(String data) {
-            chave = data;
+        public Node(Palavra data) {
+            key = data;
             altura = 1;
-            dados = new ArrayList<>();
-            vezesBuscada = 0;
         }
 
         /**
          * Retorna a informação guardada nesse nó.
-         * @return string contendo a informação.
+         * @return objeto Palavra contendo a informação.
          */
-        public String getChave() {
-            return chave;
+        public Palavra getKey() {
+            return key;
         }
 
         /**
          * Dita qual informação esse nó irá passar guardar.
-         * @param chave string contendo informação.
+         * @param key objeto Palavra contendo informação.
          */
-        public void setChave(String chave) {
-            this.chave = chave;
+        public void setKey(Palavra key) {
+            this.key = key;
         }
 
         /**
@@ -125,42 +117,6 @@ public class ArvoreAVL {
         public void setDireita(Node direita) {
             this.direita = direita;
         }
-
-        /**
-         * Retorna a quantidade de vezes que a informação desse nó foi buscada.
-         * @return int contendo a quantidade.
-         */
-        public int getVezesBuscada() {
-            return vezesBuscada;
-        }
-
-        /**
-         * Incrementa o contador de quantidade de vezes que informação desse nó foi buscada.
-         */
-        public void incrementVezesBuscada() {
-            this.vezesBuscada++;
-        }
-
-        /**
-         * Retorna a lista de dados desse nó.
-         * @return lista de dados.
-         */
-        public ArrayList<Dados> getListaDados() {
-            return dados;
-        }
-
-        /**
-         * Retorna o iterador da lista de dados desse nó.
-         * @return iterador da lista.
-         */
-        public Iterator listarDados() {
-            return dados.iterator();
-        }
-
-        @Override
-        public String toString() {
-            return chave;
-        }
     }
     /**
      * Insere o elemento especificado nessa árvore.
@@ -168,7 +124,7 @@ public class ArvoreAVL {
      * @param chave elemento a ser inserido.
      * @return true se o elemento for diferente de nulo e se o ele já não estiver na lista. false caso contrário.  
      */
-    public boolean inserir(String chave) {
+    public boolean inserir(Palavra chave) {
         if (chave == null) {
             return false;
         }
@@ -185,19 +141,19 @@ public class ArvoreAVL {
      * que determinam o local onde o novo elemento deverá ficar. Após o elemento estar no seu local, a altura e o fator de balanceamento dele é  
      * atualizado. O método recebe a raiz da árvore pois ela é o ponto de partida para qualquer local da árvore.
      * @param node raiz da árvore.
-     * @param chave elemento a ser inserido.
+     * @param word elemento a ser inserido.
      * @return o chamado da função de balanceamento passando esse elemento.
      */
-    private Node inserir(Node node, String chave) {
+    private Node inserir(Node node, Palavra word) {
         if (node == null) {
-            return new Node(chave); 
+            return new Node(word); 
         }
-        int resultado = chave.compareToIgnoreCase(node.getChave());
+        int resultado = word.getChave().compareToIgnoreCase(node.getKey().getChave());
 
         if (resultado < 0) { 
-            node.setEsquerda(inserir(node.getEsquerda(), chave));
+            node.setEsquerda(inserir(node.getEsquerda(), word));
         } else {
-            node.setDireita(inserir(node.getDireita(), chave));
+            node.setDireita(inserir(node.getDireita(), word));
         }
         
         if(tamanho() > 2)
@@ -210,16 +166,16 @@ public class ArvoreAVL {
      * Remove o elemento especificado desta árvore, caso ele esteja na árvore. 
      * Método publico de remoção de elementos. Esse método chama um método privado que faz a remoção do elemento.
      *
-     * @param chave dado a ser removido;
+     * @param word dado a ser removido;
      * @return true se o elemento for diferente de nulo e se o ele estiver na lista. false caso contrário.  
      */
-    public boolean remover(String chave) {
-        if (chave == null) {
+    public boolean remover(Palavra word) {
+        if (word == null) {
             return false;
         }
 
-        if (contains(raiz, chave)) {
-            raiz = remover(raiz, chave);
+        if (contains(raiz, word)) {
+            raiz = remover(raiz, word);
             tam--;
             return true;
         }
@@ -233,28 +189,28 @@ public class ArvoreAVL {
      * do nó. Após a substituição, a altura e o fator de balanceamento do nó é atualizado. O método recebe a raiz da árvore
      * pois ela é o ponto de partida para qualquer local da árvore.
      * @param node raiz da árvore.
-     * @param chave elemento a ser removido.
+     * @param word elemento a ser removido.
      * @return o chamado da função de balanceamento passando esse elemento.
      */
-    private Node remover(Node node, String chave) {
+    private Node remover(Node node, Palavra word) {
         if (node == null) {
             return null;
         }
 
-        int resultado = chave.compareToIgnoreCase(node.getChave());
+        int resultado = word.getChave().compareToIgnoreCase(node.getKey().getChave());
 
         if (resultado < 0) {
-            node.setEsquerda(remover(node.getEsquerda(), chave));
+            node.setEsquerda(remover(node.getEsquerda(), word));
         } else if (resultado > 0) {
-            node.setDireita(remover(node.getDireita(), chave));
+            node.setDireita(remover(node.getDireita(), word));
         } else {
             if (node.getEsquerda() == null) {
                 return node.getDireita();
             } else if (node.getDireita() == null) {
                 return node.getEsquerda();
             } else {
-                String valorDoSucessor = encontrarValorMax(node.getEsquerda());
-                node.setChave(valorDoSucessor);
+                Palavra valorDoSucessor = encontrarValorMax(node.getEsquerda());
+                node.setKey(valorDoSucessor);
                 node.setEsquerda(remover(node.getEsquerda(), valorDoSucessor));
             }
         }
@@ -272,7 +228,7 @@ public class ArvoreAVL {
      * @param chave elemento a ser buscado.
      * @return a chamada do método privado de verificação de existência.
      */
-    public boolean contains(String chave) {
+    public boolean contains(Palavra chave) {
         return contains(raiz, chave);
     }
     /**
@@ -281,19 +237,19 @@ public class ArvoreAVL {
      * a informação de se ele está contido ou não na árvore. O método recebe a raiz da árvore pois ela é o ponto de partida para 
      * qualquer local da árvore.
      * @param node raiz da árvore.
-     * @param chave elemento a ser procurado.
+     * @param word elemento a ser procurado.
      * @return true ou false - Se for encontrada a informação, retorna true, se não, false.
      */
-    private boolean contains(Node node, String chave) {
+    private boolean contains(Node node, Palavra word) {
         if (node == null) {
             return false; // Caso base
         }
-        int comparacao = chave.compareToIgnoreCase(node.getChave());
+        int comparacao = word.getChave().compareToIgnoreCase(node.getKey().getChave());
         if (comparacao < 0) {
-            return contains(node.getEsquerda(), chave);
+            return contains(node.getEsquerda(), word);
         }
         if (comparacao > 0) {
-            return contains(node.getDireita(), chave);
+            return contains(node.getDireita(), word);
         }
 
         return true;
@@ -397,12 +353,12 @@ public class ArvoreAVL {
      * @param node maior nó anterior.
      * @return dado do nó sucessor.
      */
-    private String encontrarValorMax(Node node) {
+    private Palavra encontrarValorMax(Node node) {
         while (node.getDireita()!= null) {
             node = node.getDireita();
         }
 
-        return node.getChave();
+        return node.getKey();
     }
     
     /**
@@ -417,16 +373,16 @@ public class ArvoreAVL {
     }
     /**
      * Procura o nó que armazena um elemento.
-     * @param chave elemento a ser procurado.
+     * @param word elemento a ser procurado.
      * @return nó caso ele seja entrado, e null caso contrário.
      */
-    public Node encontrar(String chave) {  
+    public Node encontrar(Palavra word) {  
         Node atual = raiz;
         while(atual != null){
-            if(chave.compareToIgnoreCase(atual.getChave()) < 0){
+            if(word.compareTo(atual.getKey()) < 0){
                 atual = atual.getEsquerda();
             }
-            else if(chave.compareToIgnoreCase(atual.getChave()) > 0){
+            else if(word.compareTo(atual.getKey()) > 0){
                 atual = atual.getDireita();
             }else
                 return atual;

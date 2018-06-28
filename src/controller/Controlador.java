@@ -37,18 +37,19 @@ public class Controlador {
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
         verificarIntegridade();
         
-        Node ret = tree.encontrar(palavra);        // Ele já entra aqui com o repositório atualizado.
+        Palavra word = new Palavra(palavra);
+        Node ret = tree.encontrar(word);        // Ele já entra aqui com o repositório atualizado.
 
         if (ret == null) {
-            tree.inserir(palavra);
-            ret = tree.encontrar(palavra);  // tentar tirar isso depois
+            tree.inserir(word);
+            ret = tree.encontrar(word);  // tentar tirar isso depois
             ret = atualizarPalavra(ret);
-            if (ret.getListaDados().isEmpty()) {
-                tree.remover(palavra);
+            if (ret.getKey().getListaDados().isEmpty()) {
+                tree.remover(word);
                 return null;
             }
         }
-        ret.incrementVezesBuscada();
+        ret.getKey().incrementVezesBuscada();
         
         atualizarTopKPalavras(ret);
 
@@ -57,13 +58,13 @@ public class Controlador {
         }else{
             mergeSort.sort(ret.getListaDados());
         }*/
-        mergeSort.sort(ret.getListaDados());
-        return ret.getListaDados();
+        mergeSort.sort(ret.getKey().getListaDados());
+        return ret.getKey().getListaDados();
     }
 
     private Node atualizarPalavra(Node node) {  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;
         for (Pagina pagina : paginas){ 
-            if(pagina.isModified() || node.getVezesBuscada() == 0){
+            if(pagina.isModified() || node.getKey().getVezesBuscada() == 0){
                 int cont = 0;
                 File arquivo = getPagina(pagina.getTitulo());
                 try {
@@ -78,7 +79,7 @@ public class Controlador {
                         while (tkn.hasMoreTokens()) {
                             String cmp = tkn.nextToken();
 
-                            if (cmp.equalsIgnoreCase(node.getChave())) {
+                            if (cmp.equalsIgnoreCase(node.getKey().getChave())) {
                                 cont++;
                             }
 
@@ -88,20 +89,20 @@ public class Controlador {
                     }
                     Dados data = new Dados();
                     data.setTitulo(pagina.getTitulo());
-                    int pos = node.getListaDados().indexOf(data);
+                    int pos = node.getKey().getListaDados().indexOf(data);
                     if (cont != 0) { // Se tiver pelo menos 1 ocorrência da palavra no arquivo txt
                         if(pos != -1){
-                            Dados aux = node.getListaDados().get(pos);
+                            Dados aux = node.getKey().getListaDados().get(pos);
                             aux.setQuantidade(cont);
                         }else{
-                            ArrayList<Dados> a = node.getListaDados();
+                            ArrayList<Dados> a = node.getKey().getListaDados();
                             data.setTitulo(arquivo.getName());
                             data.setQuantidade(cont);
                             a.add(data);
                         }
                     }else{                                              // SE O CONTADOR FOR 0 E ESSE NÓ TIVER ESSA ESSA PAGINA EM SEUS DADOS, QUER DIZER QUE ANTES TINHA OCORRENCIAS, MAS DEIXOU DE TER. DEVE REMVER ENTÃO ESSA PÁGINA DA LISTA DE DADOS DESSE NÓ.
                         if(pos != -1){
-                           ArrayList<Dados> a = node.getListaDados();
+                           ArrayList<Dados> a = node.getKey().getListaDados();
                            a.remove(pos);
                         }
                     }
@@ -117,7 +118,7 @@ public class Controlador {
     }
 
     private void atualizarArvore(ArrayList<String> removidas) {
-        ArrayList<String> nosARemover = new ArrayList<>();
+        ArrayList<Palavra> nosARemover = new ArrayList<>();
         // percorrer a lista de paginas verificando os isModified.
 
         // percorrer árvore procurando nós que tenham dados de páginas que foram removidas.
@@ -125,7 +126,7 @@ public class Controlador {
         
         while (itr.hasNext()) {                                           
             Node n = itr.next();
-            ArrayList<Dados> dadosPalavra = n.getListaDados();
+            ArrayList<Dados> dadosPalavra = n.getKey().getListaDados();
             for (int i=0; i < removidas.size();i++) {
                 Dados data = new Dados();
                 data.setTitulo(removidas.get(i));
@@ -136,11 +137,11 @@ public class Controlador {
             } 
             n = atualizarPalavra(n);
    
-            if(n.getListaDados().isEmpty()){
-                nosARemover.add(n.getChave());
+            if(n.getKey().getListaDados().isEmpty()){
+                nosARemover.add(n.getKey());
             }
         }
-        for(String p: nosARemover){
+        for(Palavra p: nosARemover){
             tree.remover(p);
         }
     }
@@ -265,8 +266,8 @@ public class Controlador {
     // REVER E TESTAR ISSO.
     private void atualizarTopKPalavras(Node node) {
         Dados p = new Dados();
-        p.setTitulo(node.getChave());
-        p.setQuantidade(node.getVezesBuscada());
+        p.setTitulo(node.getKey().getChave());
+        p.setQuantidade(node.getKey().getVezesBuscada());
         infoPalavras.add(p);
         mergeSort.sort(infoPalavras);
     }
