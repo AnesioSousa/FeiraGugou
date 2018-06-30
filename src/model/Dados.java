@@ -36,7 +36,7 @@ public class Dados implements Comparable<Dados> {
 
     @Override
     public String toString() {
-        return "Dados{" + "titulo=" + titulo + ", quantidade=" + quantidade + '}';
+        return "Titulo=" + titulo + ", Quantidade=" + quantidade;
     }
 
     @Override

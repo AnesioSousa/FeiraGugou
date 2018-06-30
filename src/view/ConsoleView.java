@@ -1,9 +1,15 @@
 package view;
 
 import controller.Controlador;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.Dados;
+import model.Pagina;
 
 /**
  *
@@ -12,41 +18,111 @@ import java.util.Scanner;
 public class ConsoleView {
 
     private static Controlador control = new Controlador();
+    static Scanner input = new Scanner(System.in);
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {  ////////////////////// TRATAAARRR EXCEÇÃO
         final int TAMANHO_MENU = 80;
         int opcao = 0;
-        Scanner input = new Scanner(System.in);
 
         do {
             menuPrincipal(TAMANHO_MENU);
-            System.out.printf("Digite a palavra: ");
-            String palavra = input.nextLine();
-            ArrayList ret = control.pesquisar(palavra);
-            if (ret == null) {
-                System.out.println("Não foi achado!");
-            } else {
-                for (Object d : ret) {
-                    System.out.println(d);
-                }
+            opcao = Console.readInt();
+            switch(opcao){
+                case 1: {
+                        int i = 0;
+                        do {
+                            ArrayList ret = control.pesquisar(obterPalavra()); 
+                            exibirResultados(ret);                                                               // <<<<<<<<<<<<<<                
+
+                            i = subMenu1(TAMANHO_MENU);
+                            switch (i) {
+                                case 1:{
+                                    int a = subMenu2(ret);
+                                        // ARQUIVOS FORAM ALTERADOS, A LISTA DE RESULTADOS AGORA SERÁ ATUALIZADA!! - dai volta pra exibir resultados
+                                        verificarResults(ret);
+                                        exibirArquivo(a - 1, ret); //  Antes de exibir um arquivo, é preciso saber se algum item da lista de resultados foi mexido.
+                                    }
+                                    System.out.println("Tecle ENTER para continuar...");
+                                    Console.readChar();
+                            }
+                        } while(i != 3);
+                
+                    }
+                case 2: 
+                System.out.println("Tecle ENTER para continuar...");
+                Console.readChar();
             }
             
-            System.out.println("Deseja sair?");
-            opcao = Console.readInt();
-        }while(opcao != 1);
+        }while(opcao != 0);
+    }
+    
+    private static String obterPalavra(){
+        System.out.printf("Digite a palavra: ");
+        String palavra = input.nextLine();
+        
+        return palavra;
+    }
+    
+    private static void exibirResultados(ArrayList results){
+        if (results.isEmpty()) {
+            System.out.println("Não foi achado!");
+        } else {
+            for (int i = 0; i < results.size(); i++) {
+                System.out.println(i+1 +" - " + results.get(i));
+            }
+        }
+    }
+    
+    private static int subMenu1(int tamanho) throws IOException{  ////////////////////// TRATAAARRR EXCEÇÃO
+        int opcao = 0;
+        barra(tamanho, true);
+        novoItem(tamanho, "Abrir página", "1", true);
+        novoItem(tamanho, "Alterar ordem", "2", true);
+        novoItem(tamanho, "Realizar outra busca", "3", true);
+        barra(tamanho, true);
+        opcao = Console.readInt();
+        
+        return opcao;
+    }
+    
+    private static int subMenu2(ArrayList results) throws IOException{   ////////////////////// TRATAAARRR EXCEÇÃO
+        int opcao = 0;
+        System.out.print("Digite o número da página: ");
+        opcao = Console.readInt();
+        
+        return opcao;
+    }
+
+    private static void verificarResults(ArrayList results) {
+        System.out.println("ARQUIVOS FORAM ALTERADOS, A LISTA DE RESULTADOS AGORA SERÁ ATUALIZADA!!");
+        control.verificarIntegridadeResultados(results);
+    }
+    
+    // Pra quando o usuário pedir pra abrir algum
+    private static void exibirArquivo(int i, ArrayList results){
+        Dados p = (Dados) results.get(i);
+        File arquivo = control.getPagina(p.getTitulo());
+        try {
+            Scanner pages = new Scanner(arquivo);
+            System.out.println("Conteúdo da página: \n");
+            while (pages.hasNext()) {
+                String linha = pages.nextLine();
+                System.out.println(linha);
+            }
+            System.out.println();
+        } catch (FileNotFoundException ex) {
+            System.out.println(ex);
+        } 
     }
     
     private static void menuPrincipal(int tamanho) {
         barra(tamanho, true);
-        textoSimples(tamanho, "BlackJack", true, true);
+        textoSimples(tamanho, "FeiraGugou", true, true);
         separador(tamanho, true);
-        novoItem(tamanho, "Novo jogador", "1", true);
-        novoItem(tamanho, "Iniciar partida", "2", true);
-        novoItem(tamanho, "Recarregar", "3", true);
-        novoItem(tamanho, "Recordes", "4", true);
-        novoItem(tamanho, "Regras", "5", true);
+        novoItem(tamanho, "Realizar Busca", "1", true);
+        novoItem(tamanho, "Top-K", "2", true);
         separador(tamanho, true);
-        novoItem(tamanho, "Sair", "6", true);
+        novoItem(tamanho, "Sair", "0", true);
         barra(tamanho, true);
     }
     

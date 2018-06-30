@@ -21,6 +21,7 @@ public class Controlador {
     private Arquivos files;
     private MergeSort mergeSort;
     private ArrayList<Dados> infoPalavras;
+    private ArrayList<Dados> resultPalavras;
     private ArvoreAVL tree;
     private ArrayList<Pagina> paginas;
 
@@ -35,7 +36,7 @@ public class Controlador {
 
     public ArrayList pesquisar(String palavra/*, boolean invertido*/) { // REVER ISSO DEPOIS!!!
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
-        verificarIntegridade();
+        verificarIntegridade(paginas);
         
         Palavra word = new Palavra(palavra);
         Node ret = tree.encontrar(word);        // Ele já entra aqui com o repositório atualizado.
@@ -46,7 +47,7 @@ public class Controlador {
             ret = atualizarPalavra(ret);
             if (ret.getKey().getListaDados().isEmpty()) {
                 tree.remover(word);
-                return null;
+                return word.getListaDados();  // Era return null;
             }
         }
         ret.getKey().incrementVezesBuscada();
@@ -59,6 +60,8 @@ public class Controlador {
             mergeSort.sort(ret.getListaDados());
         }*/
         mergeSort.sort(ret.getKey().getListaDados());
+        resultPalavras = ret.getKey().getListaDados();
+        
         return ret.getKey().getListaDados();
     }
 
@@ -146,50 +149,50 @@ public class Controlador {
         }
     }
 
-    private void verificarIntegridade() {
+    private void verificarIntegridade(ArrayList<Pagina> pages) {
         boolean flag = true;
 
         ArrayList<String> removidas = new ArrayList<>();
 
         // SE PASSAR DIRETO, É PQ NENHUM ARQUIVO FOI REMOVIDO NEM MODIFICADO.
-        for (int i = 0; i < paginas.size(); i++) {
-            File arq = getPagina(paginas.get(i).getTitulo());  
+        for (int i = 0; i < pages.size(); i++) {
+            File arq = getPagina(pages.get(i).getTitulo());  
             if (arq == null) {
                 flag = false;
                 //System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO REMOVIDO!!");
-                removidas.add(paginas.get(i).getTitulo());
+                removidas.add(pages.get(i).getTitulo());
             } else {                                             // Pega os arquivos não removidos
                 //System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO PRESENTE!!");
-                if (paginas.get(i).getInfo() != arq.lastModified()) {
+                if (pages.get(i).getInfo() != arq.lastModified()) {
                     flag = false;
-                    paginas.get(i).setModified(true);
+                    pages.get(i).setModified(true);
                 }
             }
         }
         for (String pag: removidas) {
             Pagina p = new Pagina();
             p.setTitulo(pag);
-            paginas.remove(p); 
+            pages.remove(p); 
         }
         
         /* TEM QUE ADD NOVOS ARQUIVOS À LISTA DE PAGINAS.*/
         ArrayList<Pagina> aComparar = new ArrayList();
         aComparar = files.passarArqParaPaginas(aComparar, files.obterRepositorio());
         
-        mergeSort.sort(paginas);
+        mergeSort.sort(pages);
         mergeSort.sort(aComparar);
         
-        if(paginas.size() < aComparar.size()){
+        if(pages.size() < aComparar.size()){
             
             for (int i = 0; i < aComparar.size(); i++) {
                 Pagina p = new Pagina();
                 p.setTitulo(aComparar.get(i).getTitulo());
-                if(!paginas.contains(p)){
+                if(!pages.contains(p)){
                     flag = false;
                     p.setTitulo(aComparar.get(i).getTitulo());
                     p.setInfo(aComparar.get(i).getInfo());
                     p.setModified(true);
-                    paginas.add(p);
+                    pages.add(p);
                 }
             }
         }
@@ -198,7 +201,11 @@ public class Controlador {
             atualizarArvore(removidas);
         }
     }
-
+    
+    public void verificarIntegridadeResultados(ArrayList a){ // AQUI É UMA LISTA DE DADOS. VAI TER QUE CONVERTER PRA PÁGINAS ANTES DE MANDAR PRA VERIFICAR INTEGRIDADE
+        
+    }
+    
     private boolean verificarMultiPalavras(String palavra) {
         Pattern padrao = Pattern.compile("\\s+[A-Za-z]+");
         Matcher verificador = padrao.matcher(palavra);
