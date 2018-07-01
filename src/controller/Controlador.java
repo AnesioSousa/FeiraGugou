@@ -41,7 +41,7 @@ public class Controlador {
         Node ret = tree.encontrar(word);        // Ele já entra aqui com o repositório atualizado.
 
         if (ret == null) {
-            tree.inserir(word);
+            tree.inserir(word); // tirar isso
             ret = tree.encontrar(word);  // tentar tirar isso depois
             ret = atualizarPalavra(ret);
             if (ret.getKey().getListaDados().isEmpty()) {
@@ -62,6 +62,7 @@ public class Controlador {
         return ret.getKey().getListaDados();
     }
 
+    //                           MUDAR PRA PALAVRA INVÉS DE NODE
     private Node atualizarPalavra(Node node) {  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;
         for (Pagina pagina : paginas){ 
             if(pagina.isModified() || node.getKey().getVezesBuscada() == 0){
@@ -124,7 +125,7 @@ public class Controlador {
         // percorrer árvore procurando nós que tenham dados de páginas que foram removidas.
         Iterator<Node> itr = tree.iterator();
         
-        while (itr.hasNext()) {                                           
+        while (itr.hasNext()) { //Percorre as Palavras da árvore tirando da lista de páginas delas as páginas removidas do repositório. 
             Node n = itr.next();
             ArrayList<Dados> dadosPalavra = n.getKey().getListaDados();
             for (int i=0; i < removidas.size();i++) {
@@ -135,7 +136,8 @@ public class Controlador {
                     dadosPalavra.remove(aux);
                 }
             } 
-            n = atualizarPalavra(n);
+            
+            n = atualizarPalavra(n); // Depois de remover, ele atualiza os dados do nó.
    
             if(n.getKey().getListaDados().isEmpty()){
                 nosARemover.add(n.getKey());
