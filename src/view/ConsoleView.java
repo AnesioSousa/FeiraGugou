@@ -30,8 +30,9 @@ public class ConsoleView {
             switch(opcao){
                 case 1: {
                         int i = 0;
+                        ArrayList ret = control.pesquisar(obterPalavra()); 
                         do {
-                            ArrayList ret = control.pesquisar(obterPalavra()); 
+                            
                             exibirResultados(ret);                                                               // <<<<<<<<<<<<<<                
 
                             i = subMenu1(TAMANHO_MENU);
@@ -39,7 +40,7 @@ public class ConsoleView {
                                 case 1:{
                                     int a = subMenu2(ret);
                                         // ARQUIVOS FORAM ALTERADOS, A LISTA DE RESULTADOS AGORA SERÁ ATUALIZADA!! - dai volta pra exibir resultados
-                                        verificarResults(ret);
+                                        //verificarResults(ret);
                                         exibirArquivo(a - 1, ret); //  Antes de exibir um arquivo, é preciso saber se algum item da lista de resultados foi mexido.
                                     }
                                     System.out.println("Tecle ENTER para continuar...");
@@ -104,7 +105,7 @@ public class ConsoleView {
         File arquivo = control.getPagina(p.getTitulo());
         try {
             Scanner pages = new Scanner(arquivo);
-            System.out.println("Conteúdo da página: \n");
+            System.out.println("Conteúdo da página: "+ p.getTitulo() +"\n");
             while (pages.hasNext()) {
                 String linha = pages.nextLine();
                 System.out.println(linha);

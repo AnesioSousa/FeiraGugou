@@ -21,7 +21,6 @@ public class Controlador {
     private Arquivos files;
     private MergeSort mergeSort;
     private ArrayList<Dados> infoPalavras;
-    private ArrayList<Dados> resultPalavras;
     private ArvoreAVL tree;
     private ArrayList<Pagina> paginas;
 
@@ -60,8 +59,6 @@ public class Controlador {
             mergeSort.sort(ret.getListaDados());
         }*/
         mergeSort.sort(ret.getKey().getListaDados());
-        resultPalavras = ret.getKey().getListaDados();
-        
         return ret.getKey().getListaDados();
     }
 
