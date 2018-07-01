@@ -30,12 +30,12 @@ public class Controlador {
         this.infoPalavras = new ArrayList<>();
         this.tree = new ArvoreAVL();
         this.paginas = new ArrayList<>(); 
-        //this.paginas = files.passarArqParaPaginas(paginas, files.obterRepositorio());
+        this.paginas = files.passarArqParaPaginas(paginas, files.obterRepositorio());
     }
 
     public ArrayList pesquisar(String palavra/*, boolean invertido*/) { // REVER ISSO DEPOIS!!!
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
-        verificarIntegridade(paginas);
+        //verificarIntegridade(paginas);
         
         Palavra word = new Palavra(palavra);
         Palavra verificador = tree.encontrar(word);        // Ele já entra aqui com o repositório atualizado.
@@ -57,7 +57,6 @@ public class Controlador {
             mergeSort.sort(ret.getListaDados());
         }*/
         mergeSort.sort(word.getListaDados());
-        
         return word.getListaDados();
     }
     // ESSE MÉTODO FAZ 2 COISAS: ALÉM DE ATUALIZAR A PALAVRA, NO MESMO PROCESSO ELE ATUALIZA OS ARQUIVOS MODIFICADOS.
