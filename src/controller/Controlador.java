@@ -35,7 +35,7 @@ public class Controlador {
 
     public ArrayList pesquisar(String palavra/*, boolean invertido*/) { // REVER ISSO DEPOIS!!!
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
-        osArquivosEstaoIntegros();
+        atualizarPaginas();
         
         Palavra word = new Palavra(palavra);
         Palavra verificador = tree.encontrar(word);        // Ele já entra aqui com o repositório atualizado.
@@ -154,8 +154,13 @@ public class Controlador {
         }
         
     }
-
-    public boolean osArquivosEstaoIntegros() {  // Remover da lista principal de páginas os arquivos removidos, e marca os modificados e novos.
+    
+    public boolean osArquivosEstaoIntegros(){
+        
+        return false;
+    }
+    
+    public void atualizarPaginas() {  // Remover da lista principal de páginas os arquivos removidos, e marca os modificados e novos.
         boolean flag = true;
 
         ArrayList<String> removidas = new ArrayList<>();
@@ -206,8 +211,6 @@ public class Controlador {
         if(!flag){
             atualizarArvore(removidas);
         }
-        
-        return flag;
     }
     
     private boolean verificarMultiPalavras(String palavra) {

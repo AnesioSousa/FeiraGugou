@@ -131,10 +131,10 @@ class Testes {
         }*/
         /*input.nextLine();
         
-        System.out.println(osArquivosEstaoIntegros(arquivos));*/
+        System.out.println(atualizarPaginas(arquivos));*/
 //=================================================================================================================================\\
     
-     /*private static boolean osArquivosEstaoIntegros(File[] arquivos) {
+     /*private static boolean atualizarPaginas(File[] arquivos) {
         Arquivos man = new Arquivos();
         File[] aComparar = man.obter();
         long[] trab = null;
