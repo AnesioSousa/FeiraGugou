@@ -288,8 +288,8 @@ public class ArvoreAVLTest {
         tree.inserir(anesio);
 
         String esperado = "anesio";
-        Node resultado = tree.encontrar(anesio);
-        assertEquals(esperado, resultado.getKey().getChave());
+        Palavra resultado = tree.encontrar(anesio);
+        assertEquals(esperado, resultado.getChave());
         
         Palavra chaves = new Palavra("chaves");
         Palavra chiquinha = new Palavra("chiquinha");
@@ -304,7 +304,7 @@ public class ArvoreAVLTest {
         chave = "kiko";
         esperado = "kiko";
         resultado = tree.encontrar(kiko);
-        assertEquals(esperado, resultado.getKey().getChave());
+        assertEquals(esperado, resultado.getChave());
     }
 
     /**
