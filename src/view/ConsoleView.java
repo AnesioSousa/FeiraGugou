@@ -6,10 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Dados;
-import model.Pagina;
 
 /**
  *
@@ -94,10 +91,10 @@ public class ConsoleView {
         return opcao;
     }
 
-    private static void verificarResults(ArrayList results) {
+    /*private static void verificarResults(ArrayList results) {
         System.out.println("ARQUIVOS FORAM ALTERADOS, A LISTA DE RESULTADOS AGORA SERÁ ATUALIZADA!!");
         control.verificarIntegridadeResultados(results);
-    }
+    }*/
     
     // Pra quando o usuário pedir pra abrir algum
     private static void exibirArquivo(int i, ArrayList results){

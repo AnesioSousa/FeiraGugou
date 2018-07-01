@@ -30,7 +30,7 @@ public class Controlador {
         this.infoPalavras = new ArrayList<>();
         this.tree = new ArvoreAVL();
         this.paginas = new ArrayList<>(); 
-        this.paginas = files.passarArqParaPaginas(paginas, files.obterRepositorio());
+        //this.paginas = files.passarArqParaPaginas(paginas, files.obterRepositorio());
     }
 
     public ArrayList pesquisar(String palavra/*, boolean invertido*/) { // REVER ISSO DEPOIS!!!
@@ -60,10 +60,13 @@ public class Controlador {
         
         return word.getListaDados();
     }
+    // ESSE MÉTODO FAZ 2 COISAS: ALÉM DE ATUALIZAR A PALAVRA, NO MESMO PROCESSO ELE ATUALIZA OS ARQUIVOS MODIFICADOS.
+    // ENTÃO PRIMEIRO DEVE ATUALIZAR A LISTA DE PÁGINAS GERAL (ADICIONANDO E REMOVENDO), DEPOIS VIR PRA AQUI PRA ATUALIZAR CADA PÁGINA MODIFICADA.
+    // <<<< NÃO PODE REMOVER PRIMEEEIROOO!!!! >>>>>
 
-    private Palavra atualizarPalavra(Palavra word) {  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;
+    private Palavra atualizarPalavra(Palavra word) { 
         for (Pagina pagina : paginas){ 
-            if(pagina.isModified() || word.getVezesBuscada() == 0){
+            if(pagina.isModified() || word.getVezesBuscada() == 0){ // SE ALGUMA PÁGINA FOI MODIFICADA OU É A PRIMEIRA VEZ QUE A PALAVRA É BUSCADA.
                 int cont = 0;
                 File arquivo = getPagina(pagina.getTitulo());
                 try {
@@ -102,7 +105,7 @@ public class Controlador {
                     }else{                                              // SE O CONTADOR FOR 0 E ESSE NÓ TIVER ESSA ESSA PAGINA EM SEUS DADOS, QUER DIZER QUE ANTES TINHA OCORRENCIAS, MAS DEIXOU DE TER. DEVE REMVER ENTÃO ESSA PÁGINA DA LISTA DE DADOS DESSE NÓ.
                         if(pos != -1){
                            ArrayList<Dados> a = word.getListaDados();
-                           a.remove(pos);
+                           a.remove(pos);                               // Remove a Página da lista de Páginas de uma Palavra
                         }
                     }
                     input.close();
@@ -117,16 +120,24 @@ public class Controlador {
     }
 
     private void atualizarArvore(ArrayList<String> removidas) {
-        ArrayList<Palavra> nosARemover = new ArrayList<>();
-        // percorrer a lista de paginas verificando os isModified.
+        // JA FAZ>>>>>:
+        // PERCORRER A ÁRVORE UMA VEZ SÓ ATUALIZANDO TUDO:
+        // percorrer a lista de paginas verificando os isModified e atualizando a Palavra.
+        // percorrer a lista de adicionados verificando se a Palavra contem em alguma nova página.
+        // percorrer a lista de removidos verificando se a Palavra tem alguma página que foi removida e tirar. (provavelemte seja a ultima coisa a fazer)
+        
 
-        // percorrer árvore procurando nós que tenham dados de páginas que foram removidas.
+        
+        ArrayList<Palavra> nosARemover = new ArrayList<>();
         Iterator<Palavra> itr = tree.iterator();
         
         while (itr.hasNext()) { //Percorre as Palavras da árvore tirando da lista de páginas delas as páginas removidas do repositório. 
             Palavra n = itr.next();
             ArrayList<Dados> dadosPalavra = n.getListaDados();
-            for (int i=0; i < removidas.size();i++) {
+            
+            atualizarPalavra(n); // Atualiza os dados da Palavra verificando os arquivos alterados e adicionados.
+            
+            for (int i=0; i < removidas.size();i++) { // Remove da Palavra (se tiver) as Páginas removidas.
                 Dados data = new Dados();
                 data.setTitulo(removidas.get(i));
                 int aux = dadosPalavra.indexOf(data);
@@ -135,18 +146,16 @@ public class Controlador {
                 }
             } 
             
-            atualizarPalavra(n); // Depois de remover, ele atualiza os dados do nó. (TEM QUE SER É DA PALAVRA) MUDARRRRRRRRRRRRRRR
-   
-            if(n.getListaDados().isEmpty()){
-                nosARemover.add(n);
+            if(n.getListaDados().isEmpty()){     // SE APÓS A REMOÇÃO, SE A PALAVRA NÃO TEM MAIS NINGUEM NA LISTA DE PÁGINA, ESSA PALAVRA É MARCADA PARA REMOÇÃO DA ÁRVORE
+                nosARemover.add(n);              // Marca a palavra se ela não tiver incidencia em nenhuma página.
             }
         }
-        for(Palavra p: nosARemover){
+        for(Palavra p: nosARemover){ // E ENTÃO REMOVIDA!
             tree.remover(p);
         }
     }
 
-    private void verificarIntegridade(ArrayList<Pagina> pages) {
+    private void verificarIntegridade(ArrayList<Pagina> pages) {  // Remover da lista principal de páginas os arquivos removidos, e marca os modificados e novos.
         boolean flag = true;
 
         ArrayList<String> removidas = new ArrayList<>();
@@ -166,7 +175,7 @@ public class Controlador {
                 }
             }
         }
-        for (String pag: removidas) {
+        for (String pag: removidas) { 
             Pagina p = new Pagina();
             p.setTitulo(pag);
             pages.remove(p); 
@@ -197,10 +206,6 @@ public class Controlador {
         if(!flag){
             atualizarArvore(removidas);
         }
-    }
-    
-    public void verificarIntegridadeResultados(ArrayList a){ // AQUI É UMA LISTA DE DADOS. VAI TER QUE CONVERTER PRA PÁGINAS ANTES DE MANDAR PRA VERIFICAR INTEGRIDADE
-        
     }
     
     private boolean verificarMultiPalavras(String palavra) {
