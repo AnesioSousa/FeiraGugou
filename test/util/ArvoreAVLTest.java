@@ -349,10 +349,10 @@ public class ArvoreAVLTest {
         String[] vetor = new String[4];
 
         int i = 0;
-        Iterator<Node> itr = tree.iterator();
+        Iterator<Palavra> itr = tree.iterator();
         while (itr.hasNext()) {
-            Node n = itr.next();
-            vetor[i] = n.getKey().getChave();
+            Palavra n = itr.next();
+            vetor[i] = n.getChave();
             i++;
         }
 

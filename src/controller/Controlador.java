@@ -38,34 +38,32 @@ public class Controlador {
         verificarIntegridade(paginas);
         
         Palavra word = new Palavra(palavra);
-        Node ret = tree.encontrar(word);        // Ele já entra aqui com o repositório atualizado.
+        Palavra verificador = tree.encontrar(word);        // Ele já entra aqui com o repositório atualizado.
 
-        if (ret == null) {
-            tree.inserir(word); // tirar isso
-            ret = tree.encontrar(word);  // tentar tirar isso depois
-            ret = atualizarPalavra(ret);
-            if (ret.getKey().getListaDados().isEmpty()) {
-                tree.remover(word);
-                return word.getListaDados();  // Era return null;
+        if (verificador == null) {                     // Ver depois se não dá pra já usar "word" invés desse "verificador"
+            word = atualizarPalavra(word);
+            if (word.getListaDados().isEmpty()) {      // VAI PRECISAR REMOVER O NO?
+                return word.getListaDados();
             }
+            tree.inserir(word);
         }
-        ret.getKey().incrementVezesBuscada();
+        word.incrementVezesBuscada();
         
-        atualizarTopKPalavras(ret);
+        atualizarTopKPalavras(word);
 
         /*if(invertido){
             inverter(ret.getListaDados());
         }else{
             mergeSort.sort(ret.getListaDados());
         }*/
-        mergeSort.sort(ret.getKey().getListaDados());
-        return ret.getKey().getListaDados();
+        mergeSort.sort(word.getListaDados());
+        
+        return word.getListaDados();
     }
 
-    //                           MUDAR PRA PALAVRA INVÉS DE NODE
-    private Node atualizarPalavra(Node node) {  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;
+    private Palavra atualizarPalavra(Palavra word) {  // SÓ VAI ACESSAR AQUI SE A PALAVRA CHAVE NÃO ESTIVER NA ÁRVORE;
         for (Pagina pagina : paginas){ 
-            if(pagina.isModified() || node.getKey().getVezesBuscada() == 0){
+            if(pagina.isModified() || word.getVezesBuscada() == 0){
                 int cont = 0;
                 File arquivo = getPagina(pagina.getTitulo());
                 try {
@@ -80,7 +78,7 @@ public class Controlador {
                         while (tkn.hasMoreTokens()) {
                             String cmp = tkn.nextToken();
 
-                            if (cmp.equalsIgnoreCase(node.getKey().getChave())) {
+                            if (cmp.equalsIgnoreCase(word.getChave())) {
                                 cont++;
                             }
 
@@ -90,20 +88,20 @@ public class Controlador {
                     }
                     Dados data = new Dados();
                     data.setTitulo(pagina.getTitulo());
-                    int pos = node.getKey().getListaDados().indexOf(data);
+                    int pos = word.getListaDados().indexOf(data);
                     if (cont != 0) { // Se tiver pelo menos 1 ocorrência da palavra no arquivo txt
                         if(pos != -1){
-                            Dados aux = node.getKey().getListaDados().get(pos);
+                            Dados aux = word.getListaDados().get(pos);
                             aux.setQuantidade(cont);
                         }else{
-                            ArrayList<Dados> a = node.getKey().getListaDados();
+                            ArrayList<Dados> a = word.getListaDados();
                             data.setTitulo(arquivo.getName());
                             data.setQuantidade(cont);
                             a.add(data);
                         }
                     }else{                                              // SE O CONTADOR FOR 0 E ESSE NÓ TIVER ESSA ESSA PAGINA EM SEUS DADOS, QUER DIZER QUE ANTES TINHA OCORRENCIAS, MAS DEIXOU DE TER. DEVE REMVER ENTÃO ESSA PÁGINA DA LISTA DE DADOS DESSE NÓ.
                         if(pos != -1){
-                           ArrayList<Dados> a = node.getKey().getListaDados();
+                           ArrayList<Dados> a = word.getListaDados();
                            a.remove(pos);
                         }
                     }
@@ -115,7 +113,7 @@ public class Controlador {
             }   
             
         }
-        return node;
+        return word;
     }
 
     private void atualizarArvore(ArrayList<String> removidas) {
@@ -123,11 +121,11 @@ public class Controlador {
         // percorrer a lista de paginas verificando os isModified.
 
         // percorrer árvore procurando nós que tenham dados de páginas que foram removidas.
-        Iterator<Node> itr = tree.iterator();
+        Iterator<Palavra> itr = tree.iterator();
         
         while (itr.hasNext()) { //Percorre as Palavras da árvore tirando da lista de páginas delas as páginas removidas do repositório. 
-            Node n = itr.next();
-            ArrayList<Dados> dadosPalavra = n.getKey().getListaDados();
+            Palavra n = itr.next();
+            ArrayList<Dados> dadosPalavra = n.getListaDados();
             for (int i=0; i < removidas.size();i++) {
                 Dados data = new Dados();
                 data.setTitulo(removidas.get(i));
@@ -137,10 +135,10 @@ public class Controlador {
                 }
             } 
             
-            n = atualizarPalavra(n); // Depois de remover, ele atualiza os dados do nó.
+            atualizarPalavra(n); // Depois de remover, ele atualiza os dados do nó. (TEM QUE SER É DA PALAVRA) MUDARRRRRRRRRRRRRRR
    
-            if(n.getKey().getListaDados().isEmpty()){
-                nosARemover.add(n.getKey());
+            if(n.getListaDados().isEmpty()){
+                nosARemover.add(n);
             }
         }
         for(Palavra p: nosARemover){
@@ -270,10 +268,10 @@ public class Controlador {
         return paginas;
     }
     // REVER E TESTAR ISSO.
-    private void atualizarTopKPalavras(Node node) {
+    private void atualizarTopKPalavras(Palavra word) { // PAREI DE UTILIZAR O NODEEE.. TEM QUE REVER ISSOO!!!
         Dados p = new Dados();
-        p.setTitulo(node.getKey().getChave());
-        p.setQuantidade(node.getKey().getVezesBuscada());
+        p.setTitulo(word.getChave());
+        p.setQuantidade(word.getVezesBuscada());
         infoPalavras.add(p);
         mergeSort.sort(infoPalavras);
     }

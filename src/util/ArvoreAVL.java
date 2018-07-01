@@ -376,7 +376,7 @@ public class ArvoreAVL {
      * @param word elemento a ser procurado.
      * @return nó caso ele seja entrado, e null caso contrário.
      */
-    public Node encontrar(Palavra word) {  
+    public Palavra encontrar(Palavra word) {  
         Node atual = raiz;
         while(atual != null){
             if(word.compareTo(atual.getKey()) < 0){
@@ -385,7 +385,7 @@ public class ArvoreAVL {
             else if(word.compareTo(atual.getKey()) > 0){
                 atual = atual.getDireita();
             }else
-                return atual;
+                return atual.getKey();
         }
         return null;
     }
@@ -418,13 +418,13 @@ public class ArvoreAVL {
      * Retorna um iterador para percorrer a árvore em ordem.
      * @return iterador.
      */
-    public java.util.Iterator<Node> iterator () {
+    public java.util.Iterator<Palavra> iterator () {
 
         final int expectedNodeCount = tam;
         final java.util.Stack<Node> stack = new java.util.Stack<>();
         stack.push(raiz);
 
-        return new java.util.Iterator<Node> () {
+        return new java.util.Iterator<Palavra> () {
             Node trav = raiz;
             @Override 
             public boolean hasNext() {
@@ -432,7 +432,7 @@ public class ArvoreAVL {
                 return raiz != null && !stack.isEmpty();
             }
             @Override 
-            public Node next () {
+            public Palavra next () {
                 if (expectedNodeCount != tam) throw new java.util.ConcurrentModificationException();
 
                 while(trav != null && trav.getEsquerda() != null) {
@@ -447,7 +447,7 @@ public class ArvoreAVL {
                     trav = node.getDireita();
                 }
 
-                return node;
+                return node.getKey();
             }      
         };
     }

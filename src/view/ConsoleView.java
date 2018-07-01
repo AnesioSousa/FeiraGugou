@@ -66,7 +66,7 @@ public class ConsoleView {
     
     private static void exibirResultados(ArrayList results){
         if (results.isEmpty()) {
-            System.out.println("Não foi achado!");
+            System.out.println("Não foi achado!"); // SE NÃO FOI ACHADO, NO SUBMENU1 SÓ MOSTRAR "Realizar outra busca"
         } else {
             for (int i = 0; i < results.size(); i++) {
                 System.out.println(i+1 +" - " + results.get(i));
