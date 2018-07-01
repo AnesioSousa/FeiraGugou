@@ -26,24 +26,27 @@ public class ConsoleView {
             opcao = Console.readInt();
             switch(opcao){
                 case 1: {
-                        int i = 0;
-                        ArrayList ret = control.pesquisar(obterPalavra()); 
+                        int choice = 0;
+                        int pos = 0;
+                        String palavra = obterPalavra();
+                        ArrayList ret = control.pesquisar(palavra); 
                         do {
-                            
                             exibirResultados(ret);                                                               // <<<<<<<<<<<<<<                
-
-                            i = subMenu1(TAMANHO_MENU);
-                            switch (i) {
+                            choice = subMenu1(TAMANHO_MENU);
+                            switch (choice) { 
                                 case 1:{
-                                    int a = subMenu2(ret);
-                                        // ARQUIVOS FORAM ALTERADOS, A LISTA DE RESULTADOS AGORA SERÁ ATUALIZADA!! - dai volta pra exibir resultados
-                                        //verificarResults(ret);
-                                        exibirArquivo(a - 1, ret); //  Antes de exibir um arquivo, é preciso saber se algum item da lista de resultados foi mexido.
+                                        if(filesAreOK() == true){     // TA COM BOOO, VERIFICAR ISSO DEPOIS -> 
+                                            pos = subMenu2();
+                                            exibirArquivo(pos - 1, ret);
+                                        }else{
+                                            System.out.println("ARQUIVOS FORAM ALTERADOS, A BASE DE DADOS E A LISTA DE RESULTADOS AGORA SERÃO ATUALIZADOS!!");
+                                            //ret = control.pesquisar(palavra);
+                                        }
                                     }
-                                    System.out.println("Tecle ENTER para continuar...");
-                                    Console.readChar();
                             }
-                        } while(i != 3);
+                            System.out.println("Tecle ENTER para continuar...");
+                            Console.readChar();
+                        } while(choice != 3);
                 
                     }
                 case 2: 
@@ -83,7 +86,7 @@ public class ConsoleView {
         return opcao;
     }
     
-    private static int subMenu2(ArrayList results) throws IOException{   ////////////////////// TRATAAARRR EXCEÇÃO
+    private static int subMenu2() throws IOException{   ////////////////////// TRATAAARRR EXCEÇÃO
         int opcao = 0;
         System.out.print("Digite o número da página: ");
         opcao = Console.readInt();
@@ -91,20 +94,19 @@ public class ConsoleView {
         return opcao;
     }
 
-    /*private static void verificarResults(ArrayList results) {
-        System.out.println("ARQUIVOS FORAM ALTERADOS, A LISTA DE RESULTADOS AGORA SERÁ ATUALIZADA!!");
-        control.verificarIntegridadeResultados(results);
-    }*/
+    private static boolean filesAreOK() {        
+        return control.osArquivosEstaoIntegros();
+    }
     
     // Pra quando o usuário pedir pra abrir algum
     private static void exibirArquivo(int i, ArrayList results){
         Dados p = (Dados) results.get(i);
         File arquivo = control.getPagina(p.getTitulo());
         try {
-            Scanner pages = new Scanner(arquivo);
+            Scanner leitor = new Scanner(arquivo);
             System.out.println("Conteúdo da página: "+ p.getTitulo() +"\n");
-            while (pages.hasNext()) {
-                String linha = pages.nextLine();
+            while (leitor.hasNext()) {
+                String linha = leitor.nextLine();
                 System.out.println(linha);
             }
             System.out.println();

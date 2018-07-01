@@ -30,12 +30,12 @@ public class Controlador {
         this.infoPalavras = new ArrayList<>();
         this.tree = new ArvoreAVL();
         this.paginas = new ArrayList<>(); 
-        this.paginas = files.passarArqParaPaginas(paginas, files.obterRepositorio());
+        this.paginas = files.passarArqParaPaginas(paginas, files.obterRepositorio()); // Necessário pra saber os arquivos add no repo.
     }
 
     public ArrayList pesquisar(String palavra/*, boolean invertido*/) { // REVER ISSO DEPOIS!!!
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
-        //verificarIntegridade(paginas);
+        osArquivosEstaoIntegros();
         
         Palavra word = new Palavra(palavra);
         Palavra verificador = tree.encontrar(word);        // Ele já entra aqui com o repositório atualizado.
@@ -152,52 +152,53 @@ public class Controlador {
         for(Palavra p: nosARemover){ // E ENTÃO REMOVIDA!
             tree.remover(p);
         }
+        
     }
 
-    private void verificarIntegridade(ArrayList<Pagina> pages) {  // Remover da lista principal de páginas os arquivos removidos, e marca os modificados e novos.
+    public boolean osArquivosEstaoIntegros() {  // Remover da lista principal de páginas os arquivos removidos, e marca os modificados e novos.
         boolean flag = true;
 
         ArrayList<String> removidas = new ArrayList<>();
 
         // SE PASSAR DIRETO, É PQ NENHUM ARQUIVO FOI REMOVIDO NEM MODIFICADO.
-        for (int i = 0; i < pages.size(); i++) {
-            File arq = getPagina(pages.get(i).getTitulo());  
+        for (int i = 0; i < paginas.size(); i++) {
+            File arq = getPagina(paginas.get(i).getTitulo());  
             if (arq == null) {
                 flag = false;
                 //System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO REMOVIDO!!");
-                removidas.add(pages.get(i).getTitulo());
+                removidas.add(paginas.get(i).getTitulo());
             } else {                                             // Pega os arquivos não removidos
                 //System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO PRESENTE!!");
-                if (pages.get(i).getInfo() != arq.lastModified()) {
+                if (paginas.get(i).getInfo() != arq.lastModified()) {
                     flag = false;
-                    pages.get(i).setModified(true);
+                    paginas.get(i).setModified(true);
                 }
             }
         }
         for (String pag: removidas) { 
             Pagina p = new Pagina();
             p.setTitulo(pag);
-            pages.remove(p); 
+            paginas.remove(p); 
         }
         
         /* TEM QUE ADD NOVOS ARQUIVOS À LISTA DE PAGINAS.*/
         ArrayList<Pagina> aComparar = new ArrayList();
         aComparar = files.passarArqParaPaginas(aComparar, files.obterRepositorio());
         
-        mergeSort.sort(pages);
+        mergeSort.sort(paginas);
         mergeSort.sort(aComparar);
         
-        if(pages.size() < aComparar.size()){
+        if(paginas.size() < aComparar.size()){
             
             for (int i = 0; i < aComparar.size(); i++) {
                 Pagina p = new Pagina();
                 p.setTitulo(aComparar.get(i).getTitulo());
-                if(!pages.contains(p)){
+                if(!paginas.contains(p)){
                     flag = false;
                     p.setTitulo(aComparar.get(i).getTitulo());
                     p.setInfo(aComparar.get(i).getInfo());
                     p.setModified(true);
-                    pages.add(p);
+                    paginas.add(p);
                 }
             }
         }
@@ -205,6 +206,8 @@ public class Controlador {
         if(!flag){
             atualizarArvore(removidas);
         }
+        
+        return flag;
     }
     
     private boolean verificarMultiPalavras(String palavra) {
@@ -272,7 +275,7 @@ public class Controlador {
         return paginas;
     }
     // REVER E TESTAR ISSO.
-    private void atualizarTopKPalavras(Palavra word) { // PAREI DE UTILIZAR O NODEEE.. TEM QUE REVER ISSOO!!!
+    private void atualizarTopKPalavras(Palavra word) { // PAREI DE UTILIZAR O NODEEE.. TEM QUE REVER ISSOO!!! // TEM QUE BOTAR CONDIÇÃO DE QUE SE A PALAVRA JÁ ESTIVER NA LISTA SÓ MUDAR A QUANTIDADE.
         Dados p = new Dados();
         p.setTitulo(word.getChave());
         p.setQuantidade(word.getVezesBuscada());

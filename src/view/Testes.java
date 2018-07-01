@@ -131,10 +131,10 @@ class Testes {
         }*/
         /*input.nextLine();
         
-        System.out.println(verificarIntegridade(arquivos));*/
+        System.out.println(osArquivosEstaoIntegros(arquivos));*/
 //=================================================================================================================================\\
     
-     /*private static boolean verificarIntegridade(File[] arquivos) {
+     /*private static boolean osArquivosEstaoIntegros(File[] arquivos) {
         Arquivos man = new Arquivos();
         File[] aComparar = man.obter();
         long[] trab = null;
