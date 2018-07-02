@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.regex.*;
@@ -17,37 +18,27 @@ import util.*;
  */
 public class GerenciadorDePesquisa {
 
-    private Arquivos files;
     private MergeSort mergeSort;
     private ArrayList<Dados> infoPalavras;
     private ArvoreAVL tree;
-    private ArrayList<Pagina> paginas;
-    private ArrayList<Pagina> adicionadas;
-    private ArrayList<Pagina> editadas;
-    private ArrayList<Pagina> removidas;
+    private GerenciadorDePaginas ctrl;
 
     public GerenciadorDePesquisa() {
-        this.files = new Arquivos();
         this.mergeSort = new MergeSort();
         this.infoPalavras = new ArrayList<>();
         this.tree = new ArvoreAVL();
-        this.paginas = new ArrayList<>();
-        this.paginas = files.passarArqParaPaginas(paginas, files.obterRepositorio()); // Necessário pra saber os arquivos add no repo.
-        this.adicionadas = new ArrayList<>();
-        this.editadas = new ArrayList<>();
-        this.removidas = new ArrayList<>();
+        this.ctrl = new GerenciadorDePaginas();
     }
 
     public ArrayList pesquisar(String palavra/*, boolean invertido*/) { // REVER ISSO DEPOIS!!!
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
 
-        prePesquisa();
-
+        //prePesquisa();
         Palavra word = new Palavra(palavra);
         Palavra verificador = tree.encontrar(word);        // Ele já entra aqui com o repositório atualizado.
 
         if (verificador == null) {                     // Ver depois se não dá pra já usar "word" invés desse "verificador"
-            verificador = atualizarPalavra(word, paginas);    // Isso só ocorre quando é uma palavra nova.
+            verificador = atualizarPalavra(word, ctrl.getPaginas());    //REVER ISSSOOO!!!!!!// Isso só ocorre quando é uma palavra nova.
             if (verificador.getListaDados().isEmpty()) {      // VAI PRECISAR REMOVER O NO?
                 return word.getListaDados();
             }
@@ -55,7 +46,7 @@ public class GerenciadorDePesquisa {
         }
         verificador.incrementVezesBuscada();
 
-        //atualizarTopKPalavras(word);
+        atualizarTopKPalavras(verificador);
 
         /*if(invertido){
             inverter(ret.getListaDados());
@@ -66,68 +57,6 @@ public class GerenciadorDePesquisa {
         return verificador.getListaDados();
     }
 
-    private void prePesquisa() {
-        if (identificarAlteracoes()) {
-            atualizarPaginas();
-            atualizarArvore(adicionadas, editadas, removidas);
-            limparMarcadores();
-        }
-    }
-    // ESSE MÉTODO RECEBE UMA PALAVRA E UMA LISTA DE PAGINAS, DAI ELE ATUALIZA A LISTA DE PÁGINAS DA PALAVRA COM USANDO A LISTA RECEBIDA.
-
-    private Palavra atualizarPalavra(Palavra word, ArrayList<Pagina> pages) {
-        for (Pagina pagina : pages) {
-
-            int cont = 0;
-            File arquivo = getPagina(pagina.getTitulo());   
-            try {
-                Scanner input = new Scanner(arquivo);
-                while (input.hasNext()) {
-                    String linha = input.nextLine();
-
-                    String aux = prepararLinha(linha);
-
-                    StringTokenizer tkn = new StringTokenizer(aux);
-
-                    while (tkn.hasMoreTokens()) {
-                        String cmp = tkn.nextToken();
-
-                        if (cmp.equalsIgnoreCase(word.getChave())) {
-                            cont++;
-                        }
-
-                        //System.out.print(cmp+" ");
-                    }
-                    //System.out.println();
-                }
-                Dados data = new Dados();
-                data.setTitulo(pagina.getTitulo()); 
-
-                int pos = word.getListaDados().indexOf(data);
-                if (cont != 0) { // Se tiver pelo menos 1 ocorrência da palavra no arquivo txt
-                    if (pos != -1) {
-                        Dados aux = word.getListaDados().get(pos);
-                        aux.setQuantidade(cont);
-                    } else {
-                        ArrayList<Dados> a = word.getListaDados();
-                        data.setTitulo(arquivo.getName());
-                        data.setQuantidade(cont);
-                        a.add(data);
-                    }
-                } else {                                              // SE O CONTADOR FOR 0 E ESSE NÓ TIVER ESSA ESSA PAGINA EM SEUS DADOS, QUER DIZER QUE ANTES TINHA OCORRENCIAS, MAS DEIXOU DE TER. DEVE REMVER ENTÃO ESSA PÁGINA DA LISTA DE DADOS DESSE NÓ.
-                    if (pos != -1) {
-                        ArrayList<Dados> a = word.getListaDados();
-                        a.remove(pos);                               // Remove a Página da lista de Páginas de uma Palavra
-                    }
-                }
-                input.close();
-            } catch (FileNotFoundException ex) {
-                System.out.println(ex);
-            }
-        }
-        return word;
-    }
-    
     private void atualizarArvore(ArrayList<Pagina> adicionadas, ArrayList<Pagina> alteradas, ArrayList<Pagina> removidas) {
         // DE UMA SÓ VEZ:
         // percorrer a lista de modificados verificando se a Palavra incide em alguma página modificada ou nova e à atualizar.
@@ -160,87 +89,59 @@ public class GerenciadorDePesquisa {
             tree.remover(p);
         }
     }
+    // ESSE MÉTODO RECEBE UMA PALAVRA E UMA LISTA DE PAGINAS, DAI ELE ATUALIZA A LISTA DE PÁGINAS DA PALAVRA COM USANDO A LISTA RECEBIDA.
 
-    // Remover da lista principal de páginas os arquivos removidos, e marca os modificados e novos.
-    private void atualizarPaginas() { // TEM QUE PASSAR AQUI ANTES DE PASSAR NA "atualizarArvore"        
-        for (Pagina pag : adicionadas) {  // Adiciona à lista de páginas principal novas páginas encontradas no repositório.
-            Pagina p = new Pagina();
-            p.setTitulo(pag.getTitulo());
-            if (!paginas.contains(p)) {   // é aqui que dá pra identificar as páginas modificadas das novas
-                paginas.add(p);
-            }
-        }
-        
-        for (Pagina pag : removidas) {
-            Pagina p = new Pagina();
-            p.setTitulo(pag.getTitulo());
-            paginas.remove(p);
-        }
-    }
+    private Palavra atualizarPalavra(Palavra word, ArrayList<Pagina> pages) {
+        for (Pagina pagina : pages) {
 
-    private void limparMarcadores() {
-        editadas.clear();
-        adicionadas.clear();
-        removidas.clear();
-    }
+            int cont = 0;
+            File arquivo = ctrl.getPagina(pagina.getTitulo());   // REVER O USO DO CONTROLADOR AQUI. 
+            try {
+                Scanner input = new Scanner(arquivo);
+                while (input.hasNext()) {
+                    String linha = input.nextLine();
 
-    public boolean arqIsModified() {  // TESTAR ISSO!
-        
-        //limparMarcadores();
-        boolean a = identificarAlteracoes();
-        
-        // a == true se algo foi modificado
-        
-        limparMarcadores();
-        
-        return a;
-    }
+                    String aux = prepararLinha(linha);
 
-    private boolean identificarAlteracoes() {  // RETORNA true SE ALGO FOI MODIFICADO
-        boolean flag = false;
+                    StringTokenizer tkn = new StringTokenizer(aux);
 
-        // SE PASSAR DIRETO, É PQ NENHUM ARQUIVO FOI REMOVIDO NEM MODIFICADO.
-        for (int i = 0; i < paginas.size(); i++) {
-            File arq = getPagina(paginas.get(i).getTitulo());
-            if (arq == null) {
-                flag = true;
-                //System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO REMOVIDO!!");
-                removidas.add(paginas.get(i));
-            }
-        }
-        
-        mergeSort.sort(paginas);
+                    while (tkn.hasMoreTokens()) {
+                        String cmp = tkn.nextToken();
 
-        for (int i = 0; i < paginas.size(); i++) {  // Pega os arquivos editados
-            File arq = getPagina(paginas.get(i).getTitulo());
-            //System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO PRESENTE!!");
-            if (paginas.get(i).getInfo() != arq.lastModified()) {
-                flag = true;
-                editadas.add(paginas.get(i));
-            }
-        }
-        
-        /* TEM QUE ADD NOVOS ARQUIVOS À LISTA DE MODIFICADOS.*/
-        ArrayList<Pagina> aComparar = new ArrayList();
-        aComparar = files.passarArqParaPaginas(aComparar, files.obterRepositorio());
+                        if (cmp.equalsIgnoreCase(word.getChave())) {
+                            cont++;
+                        }
 
-        
-        mergeSort.sort(aComparar);
-
-        if (paginas.size() < aComparar.size()) {
-            for (int i = 0; i < aComparar.size(); i++) {
-                Pagina p = new Pagina();
-                p.setTitulo(aComparar.get(i).getTitulo());
-                if (!paginas.contains(p)) {
-                    flag = true;
-                    p.setTitulo(aComparar.get(i).getTitulo());
-                    p.setInfo(aComparar.get(i).getInfo());
-                    adicionadas.add(p);
+                        //System.out.print(cmp+" ");
+                    }
+                    //System.out.println();
                 }
+                Dados data = new Dados();
+                data.setTitulo(pagina.getTitulo());
+
+                int pos = word.getListaDados().indexOf(data);
+                if (cont != 0) { // Se tiver pelo menos 1 ocorrência da palavra no arquivo txt
+                    if (pos != -1) {
+                        Dados aux = word.getListaDados().get(pos);
+                        aux.setQuantidade(cont);
+                    } else {
+                        ArrayList<Dados> a = word.getListaDados();
+                        data.setTitulo(arquivo.getName());
+                        data.setQuantidade(cont);
+                        a.add(data);
+                    }
+                } else {                                              // SE O CONTADOR FOR 0 E ESSE NÓ TIVER ESSA ESSA PAGINA EM SEUS DADOS, QUER DIZER QUE ANTES TINHA OCORRENCIAS, MAS DEIXOU DE TER. DEVE REMVER ENTÃO ESSA PÁGINA DA LISTA DE DADOS DESSE NÓ.
+                    if (pos != -1) {
+                        ArrayList<Dados> a = word.getListaDados();
+                        a.remove(pos);                               // Remove a Página da lista de Páginas de uma Palavra
+                    }
+                }
+                input.close();
+            } catch (FileNotFoundException ex) {
+                System.out.println(ex);
             }
         }
-
-        return flag;
+        return word;
     }
 
     private boolean verificarMultiPalavras(String palavra) {
@@ -266,45 +167,38 @@ public class GerenciadorDePesquisa {
         return a;
     }
 
-    public File getPagina(String titulo) {
-        ArrayList<File> arq = files.obterRepositorio();
-        for (File arquivo : arq) {
-            if (arquivo.getName().equals(titulo)) {
-                return arquivo;
-            }
-        }
-        return null;
-    }
-
     public ArrayList<Dados> inverterResultados(ArrayList<Dados> lista) {
-            for(int i = 0, j = lista.size() - 1; i < j; i++) {
-                lista.add(i, lista.remove(j));
-            }
-            return lista;
+        for (int i = 0, j = lista.size() - 1; i < j; i++) {
+            lista.add(i, lista.remove(j));
         }
+        return lista;
+    }
 
-    // REVER E TESTAR ISSO.
-    public ArrayList topKMaisPalavra(int qtd) {  // Fazer pra palavra e pra página // FAZER EXCEÇÃO DE QUE SE O USUÁRIO QUISER UM TOP (TAMANHO) MAIOR DO QUE O NÚMERO DE ELEMENTOS.
-
-        return (ArrayList) infoPalavras.subList(0, qtd);
+    public List topKMaisPalavra(int qtd) {  // Fazer pra palavra e pra página // FAZER EXCEÇÃO DE QUE SE O USUÁRIO QUISER UM TOP (TAMANHO) MAIOR DO QUE O NÚMERO DE ELEMENTOS.
+        List<Dados>  aux = infoPalavras.subList(0, qtd);
+        return aux;
     }
 
     // REVER E TESTAR ISSO.
-    public ArrayList topKMenosPalavra(int qtd) {// Fazer pra palavra e pra página
-
-        return (ArrayList) infoPalavras.subList(infoPalavras.size(), qtd);
+    public List topKMenosPalavra(int qtd) {// TA ERRRAAADOOO!!! VERIFICAR DEPOIS
+        List<Dados> aux = infoPalavras.subList(infoPalavras.size()-1, qtd);
+        return aux;
     }
-
-    public ArrayList listarPaginas() {
-        return paginas;
-    }
-
+    
     // REVER E TESTAR ISSO.
-    private void atualizarTopKPalavras(Palavra word) { // PAREI DE UTILIZAR O NODEEE.. TEM QUE REVER ISSOO!!! // TEM QUE BOTAR CONDIÇÃO DE QUE SE A PALAVRA JÁ ESTIVER NA LISTA SÓ MUDAR A QUANTIDADE.
+    private void atualizarTopKPalavras(Palavra word) {  // TEM QUE BOTAR CONDIÇÃO DE QUE SE A PALAVRA JÁ ESTIVER NA LISTA SÓ MUDAR A QUANTIDADE.
         Dados p = new Dados();
         p.setTitulo(word.getChave());
-        p.setQuantidade(word.getVezesBuscada());
-        infoPalavras.add(p);
+        
+        int aux = infoPalavras.indexOf(p);
+        
+        if(aux != -1){
+           infoPalavras.get(aux).setQuantidade(word.getVezesBuscada()); // ver isso aqui depois
+        }else{
+           p.setQuantidade(word.getVezesBuscada());
+           infoPalavras.add(p);
+        }
+
         mergeSort.sort(infoPalavras);
     }
 
