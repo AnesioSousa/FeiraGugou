@@ -1,7 +1,7 @@
 package view;
 
-//import controller.Controlador;
-import controller.Controlador;
+//import controller.GerenciadorDePesquisa;
+import controller.GerenciadorDePesquisa;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,19 +22,85 @@ import util.*;
 class Testes {
     public static void main(String[] args) {
         //ArvoreAVL tree = new ArvoreAVL();
-        Controlador ctr = new Controlador();
+        GerenciadorDePesquisa ctr = new GerenciadorDePesquisa();
        // Arquivos man = new Arquivos();
         Scanner input = new Scanner(System.in);
         String op = null;
         
-        ArrayList<Pagina> paginas = new ArrayList<>();
         
-        while( !"sair".equals(op)){
+        
+        
+        
+        
+        ArrayList<Dados> lista = new ArrayList<>();
+        
+        Dados a = new Dados();
+        a.setTitulo("Teste");
+        a.setQuantidade(3);
+        
+        Dados b = new Dados();
+        b.setTitulo("Cu");
+        b.setQuantidade(2);
+        
+        Dados c = new Dados();
+        c.setTitulo("Buceta");
+        c.setQuantidade(1);
+        
+        
+        lista.add(a);
+        lista.add(b);
+        lista.add(c);
+        
+        
+        
+        for(Dados i: lista){
+            System.out.println(i);
+        }
+        
+        System.out.println("\n");
+        /*System.out.println(lista.get(0));
+        System.out.println(lista.get(lista.size()-1));
+        */
+        
+        ArrayList<Dados> aux = new ArrayList<>();
+        
+        
+        //public ArrayList<Object> reverse(ArrayList<Object> list) {
+            for(int i = 0, j = lista.size() - 1; i < j; i++) {
+                lista.add(i, lista.remove(j));
+            }
+           // return list;
+       // }
+
+        
+        for(Dados i: lista){
+            System.out.println(i);
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        /*while( !"sair".equals(op)){
             System.out.printf("Digite a palavra: ");
             String palavra = input.nextLine();
             
             ArrayList ret = ctr.pesquisar(palavra);
-            if(ret == null){
+            if(ret.isEmpty()){
                 System.out.println("Não foi achado!");
             }else{
                 for(Object d: ret){
@@ -50,8 +116,8 @@ class Testes {
             switch(i){
                 case 1: ctr.listarResultadosEmOrdemCrescente(); break;
                 case 2: ctr.listarDecrescente(); break;
-            }*/
-        }
+            }* -/
+        }*/
     }
 }    
 
@@ -131,10 +197,10 @@ class Testes {
         }*/
         /*input.nextLine();
         
-        System.out.println(atualizarPaginas(arquivos));*/
+        System.out.println(separarAlteracoes(arquivos));*/
 //=================================================================================================================================\\
     
-     /*private static boolean atualizarPaginas(File[] arquivos) {
+     /*private static boolean separarAlteracoes(File[] arquivos) {
         Arquivos man = new Arquivos();
         File[] aComparar = man.obter();
         long[] trab = null;

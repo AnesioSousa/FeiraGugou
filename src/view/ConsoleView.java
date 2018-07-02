@@ -1,6 +1,6 @@
 package view;
 
-import controller.Controlador;
+import controller.GerenciadorDePesquisa;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import model.Dados;
  */
 public class ConsoleView {
 
-    private static Controlador control = new Controlador();
+    private static GerenciadorDePesquisa control = new GerenciadorDePesquisa();
     static Scanner input = new Scanner(System.in);
 
     public static void main(String[] args) throws IOException {  ////////////////////// TRATAAARRR EXCEÇÃO
@@ -25,7 +25,7 @@ public class ConsoleView {
             menuPrincipal(TAMANHO_MENU);
             opcao = Console.readInt();
             switch(opcao){
-                case 1: {
+                case 1:
                         int choice = 0;
                         int pos = 0;
                         String palavra = obterPalavra();
@@ -34,24 +34,26 @@ public class ConsoleView {
                             exibirResultados(ret);                                                               // <<<<<<<<<<<<<<                
                             choice = subMenu1(TAMANHO_MENU);
                             switch (choice) { 
-                                case 1:{
-                                        if(filesAreOK() == true){     // TA COM BOOO, VERIFICAR ISSO DEPOIS -> 
-                                            pos = subMenu2();
-                                            exibirArquivo(pos - 1, ret);
-                                        }else{
-                                            System.out.println("ARQUIVOS FORAM ALTERADOS, A BASE DE DADOS E A LISTA DE RESULTADOS AGORA SERÃO ATUALIZADOS!!");
-                                            //ret = control.pesquisar(palavra);
-                                        }
+                                case 1:
+                                    if(!control.arqIsModified()){     // TA COM BOOO, VERIFICAR ISSO DEPOIS  TEM QUE REVERRRRR-> 
+                                        pos = subMenu2();
+                                        exibirArquivo(pos - 1, ret);
+                                    }else{
+                                        System.out.println("ARQUIVOS FORAM ALTERADOS, A BASE DE DADOS E A LISTA DE RESULTADOS AGORA SERÃO ATUALIZADOS!!");
+                                        //ret = control.pesquisar(palavra);// Posso fazer isso não, vai acabar incrementando o contador de palavra.
                                     }
+                                break;
+                                case 2:
+                                    control.inverterResultados(ret);
+                                break;
                             }
                             System.out.println("Tecle ENTER para continuar...");
                             Console.readChar();
                         } while(choice != 3);
-                
-                    }
+                break;
                 case 2: 
-                System.out.println("Tecle ENTER para continuar...");
-                Console.readChar();
+                   
+                break;
             }
             
         }while(opcao != 0);
@@ -94,10 +96,6 @@ public class ConsoleView {
         return opcao;
     }
 
-    private static boolean filesAreOK() {        
-        return control.osArquivosEstaoIntegros();
-    }
-    
     // Pra quando o usuário pedir pra abrir algum
     private static void exibirArquivo(int i, ArrayList results){
         Dados p = (Dados) results.get(i);

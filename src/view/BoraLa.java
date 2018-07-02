@@ -1,6 +1,6 @@
 package view;
 
-import controller.Controlador;
+import controller.GerenciadorDePesquisa;
 import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -33,7 +33,7 @@ import model.Dados;
  * @author anesio
  */
 public class BoraLa extends Application {
-    private static Controlador control = new Controlador();
+    private static GerenciadorDePesquisa control = new GerenciadorDePesquisa();
     Scene cena1, cena2;
     TableView<Dados> table;
     String palavra;
