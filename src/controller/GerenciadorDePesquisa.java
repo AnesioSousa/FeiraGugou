@@ -95,7 +95,7 @@ public class GerenciadorDePesquisa {
         for (Pagina pagina : pages) {
 
             int cont = 0;
-            File arquivo = ctrl.getPagina(pagina.getTitulo());   // REVER O USO DO CONTROLADOR AQUI. 
+            File arquivo = ctrl.getArquivo(pagina.getTitulo());   // REVER O USO DO CONTROLADOR AQUI. 
             try {
                 Scanner input = new Scanner(arquivo);
                 while (input.hasNext()) {

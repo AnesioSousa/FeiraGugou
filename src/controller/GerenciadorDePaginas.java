@@ -2,6 +2,7 @@ package controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import model.Pagina;
 import util.Arquivos;
@@ -42,7 +43,7 @@ public class GerenciadorDePaginas {
 
         // SE PASSAR DIRETO, É PQ NENHUM ARQUIVO FOI REMOVIDO NEM MODIFICADO.
         for (int i = 0; i < paginas.size(); i++) {
-            File arq = getPagina(paginas.get(i).getTitulo());
+            File arq = getArquivo(paginas.get(i).getTitulo());
             if (arq == null) {
                 flag = true;
                 //System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO REMOVIDO!!");
@@ -53,7 +54,7 @@ public class GerenciadorDePaginas {
         mergeSort.sort(paginas);
 
         for (int i = 0; i < paginas.size(); i++) {  // Pega os arquivos editados
-            File arq = getPagina(paginas.get(i).getTitulo());
+            File arq = getArquivo(paginas.get(i).getTitulo());
             //System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO PRESENTE!!");
             if (paginas.get(i).getInfo() != arq.lastModified()) {
                 flag = true;
@@ -120,7 +121,7 @@ public class GerenciadorDePaginas {
         return a;
     }
     
-    public File getPagina(String titulo) {
+    public File getArquivo(String titulo) {
         ArrayList<File> arq = files.obterRepositorio();
         for (File arquivo : arq) {
             if (arquivo.getName().equals(titulo)) {
@@ -130,14 +131,40 @@ public class GerenciadorDePaginas {
         return null;
     }
 
-    public List topMaisPagina(int qtd){
+    public List topKMaisPagina(int qtd){
         mergeSort.sort(paginas);
-        return null;
+        List<Pagina> aux = paginas.subList(0, qtd);          
+        return aux;
     }
     
-    public List topMenosPagina(int qtd){
+    public List topKMenosPagina(int qtd){
+        Comparator<Pagina> comp = new Comparator<Pagina>(){
+            @Override
+            public int compare(Pagina o1, Pagina o2) {
+                if (o1.getVezesAcessada() > o2.getVezesAcessada()) {
+                    return 1;
+                }
+                if (o1.getVezesAcessada() < o2.getVezesAcessada()) {
+                    return -1;
+                }
+                
+                return 0;
+            }
+        };
         
-        return null;
+        mergeSort.sort(paginas, comp);
+        List<Pagina> aux = paginas.subList(0, qtd);
+        
+        return aux;
+    }
+    
+    public boolean paginasTemAcessos(){
+        for(Pagina pag: paginas){
+            if(pag.getVezesAcessada() != 0){
+                return true;
+            }
+        }
+        return false;
     }
     
     public ArrayList getPaginas() {

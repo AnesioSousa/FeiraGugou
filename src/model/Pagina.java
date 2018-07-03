@@ -32,7 +32,7 @@ public class Pagina implements Comparable<Pagina>{
      * Dita quantas vezes essa página foi acessada.
      * @param vezesAcessada int com o valor;
      */
-    public void setVezesAcessada(int vezesAcessada) {this.vezesAcessada = vezesAcessada;}
+    public void incrementVezesAcessada() {this.vezesAcessada++;}
 
     /**
      * Retorna a um long com informações da última vez que essa página foi modificada.
@@ -45,6 +45,11 @@ public class Pagina implements Comparable<Pagina>{
      * @param info long contendo o valor.
      */
     public void setInfo(long info) {this.info = info;}
+
+    @Override
+    public String toString() {
+        return "Titulo=" + titulo + ", VezesAcessada=" + vezesAcessada + '}';
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -65,7 +70,15 @@ public class Pagina implements Comparable<Pagina>{
 
     @Override
     public int compareTo(Pagina o) {
-        return this.getTitulo().compareTo(o.getTitulo());
+        if (this.getVezesAcessada() > o.getVezesAcessada()) {
+            return - 1;
+        }
+        if (this.getVezesAcessada() < o.getVezesAcessada()) {
+            return - -1;
+        }
+        return 0;
+        
+        
+        //return this.getTitulo().compareTo(o.getTitulo());
     }
-
 }

@@ -26,15 +26,15 @@ public class PaginaTest {
     @Test
     public void testBasic() {
         p.setTitulo("Está traiçoeiro o trabalho com JavaFx");
-        p.setVezesAcessada(12);
+        p.incrementVezesAcessada();
         p.setInfo(1522511100);
         assertEquals("Está traiçoeiro o trabalho com JavaFx", p.getTitulo());
-        assertSame(12, p.getVezesAcessada());
+        assertSame(1, p.getVezesAcessada());
         assertEquals(p.getInfo(), 1522511100);
 
         Pagina temp = new Pagina();
         temp.setTitulo("Temperando a vida!");
-        temp.setVezesAcessada(7);
+        temp.incrementVezesAcessada();
         
         assertFalse(p.equals(temp));
         temp.setTitulo("Está traiçoeiro o trabalho com JavaFx");

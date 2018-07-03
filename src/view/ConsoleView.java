@@ -3,15 +3,15 @@ package view;
 import controller.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import model.Dados;
+import model.Pagina;
 
 /**
  *
- * @author Anésio
+ * @author Anésio Sousa
  */
 public class ConsoleView {
 
@@ -21,10 +21,8 @@ public class ConsoleView {
 
     public static void main(String[] args) {
         ArrayList resultados;
-        boolean repetirMenuPrincipal = false;
         int opcao = 0;
         int choice = 0;
-        int escolha = 0;
         int pos = 0;
 
         do {
@@ -43,6 +41,8 @@ public class ConsoleView {
                                 pos = lerInt(true, 0, resultados.size());
                                 System.out.println();
                                 exibirArquivo(pos - 1, resultados);
+                                System.out.println("Insira qualquer letra ou número para continuar!");
+                                input.next();
                             break;
                             case 2:
                                 controlSearch.inverterResultados(resultados);
@@ -54,9 +54,9 @@ public class ConsoleView {
                     } while (choice != 0);
                 break;
                 case 2:
-                    exibirMenuTopK();
+                    exibirMenuTopK(); // Escolha entre Top-K Palavras ou Páginas
                     choice = lerInt(true, 0, 2);
-                    switch (choice) {             // Escolha entre Top-K Palavras ou Páginas
+                    switch (choice) {
                         case 1: // SE ESCOLHER PALAVRA:
                             do{
                                 exibirMenuTopKPalavras();
@@ -95,7 +95,41 @@ public class ConsoleView {
                             }while(pos != 0);    
                         break;
                         case 2: // SE ESCOLHER PAGINA:
-                            
+                            do{
+                                exibirMenuTopKPaginas();
+                                pos = lerInt(true, 0, 2);
+                                switch(pos){
+                                    case 1: 
+                                        List<Dados> a;
+                                        if(!controlPages.paginasTemAcessos()){
+                                            System.out.println("Nenhuma página foi acessada !!");
+                                            System.out.println("Insira qualquer letra ou número para continuar!");
+                                            input.next();
+                                        }else{
+                                            System.out.println("Até quantas páginas deseja visualizar?");
+                                            pos = lerInt(true, 1, controlPages.getPaginas().size()); // Não deixa escolher uma quantidade de palavras além da quantidade de elementos na árvore
+                                            a = controlPages.topKMaisPagina(pos);
+                                            for (int i = 0; i < pos; i++) {
+                                                System.out.println(a.get(i));
+                                            }
+                                        }
+                                    break;
+                                    case 2: 
+                                        if(!controlPages.paginasTemAcessos()){
+                                            System.out.println("Nenhuma página foi acessada !!");
+                                            System.out.println("Insira qualquer letra ou número para continuar!");
+                                            input.next();
+                                        }else{
+                                            System.out.println("Até quantas páginas deseja visualizar?");
+                                            pos = lerInt(true, 1, controlPages.getPaginas().size()); // Não deixa escolher uma quantidade de palavras além da quantidade de elementos na árvore
+                                            a = controlPages.topKMenosPagina(pos);
+                                            for (int i = 0; i < pos; i++) {
+                                                System.out.println(a.get(i));
+                                            }
+                                        }
+                                    break;
+                                }
+                            }while(pos != 0);
                         break;
                     }
                 break;
@@ -164,7 +198,6 @@ public class ConsoleView {
     }
     
     private static void exibirMenuTopKPalavras(){
-        int opcao = 0;
         System.out.println("+============================================================================+");
         System.out.println("|                             TOP-K PALAVRAS                                 |");
         System.out.println("+============================================================================+");
@@ -176,37 +209,37 @@ public class ConsoleView {
         System.out.print("> ");
     }
 
-    private static int topKPaginas(int tamanho) throws IOException {
-        int opcao = 0;
-        barra(tamanho, true);
-        textoSimples(tamanho, "Top-k", true, true);
-        separador(tamanho, true);
-        novoItem(tamanho, "Mais visitadas", "1", true);
-        novoItem(tamanho, "Menos visitadas", "2", true);
-        separador(tamanho, true);
-        novoItem(tamanho, "Sair", "0", true);
-        barra(tamanho, true);
-
-        opcao = Console.readInt();
-
-        return opcao;
-    }
-
-    private static int obterNumero() throws IOException {   ////////////////////// TRATAAARRR EXCEÇÃO
-        int opcao = 0;
-        System.out.print("Digite um número valido: ");
-        opcao = Console.readInt();
-
-        return opcao;
+    private static void exibirMenuTopKPaginas(){
+        System.out.println("+============================================================================+");
+        System.out.println("|                              TOP-K PAGINAS                                 |");
+        System.out.println("+============================================================================+");
+        System.out.println("| Mais acessadas........................................................(01) |");
+        System.out.println("| Menos acessadas.......................................................(02) |");
+        System.out.println("+============================================================================+");
+        System.out.println("| Voltar................................................................(00) |");
+        System.out.println("+============================================================================+");
+        System.out.print("> ");
     }
 
     // Pra quando o usuário pedir pra abrir algum
-    private static void exibirArquivo(int i, ArrayList results) {
-        Dados p = (Dados) results.get(i);
-        File arquivo = controlPages.getPagina(p.getTitulo());
+    private static void exibirArquivo(int i, ArrayList<Dados> results) {
+        // RECEBE UMA LISTA DE "Dados" MAS O QUE EU TENHO QUE INCREMENTAR É "Pagina". :/
+        // VER SE DÁ PRA REDUZIR ISSO DEPOIS
+        Dados dadosRef = results.get(i);
+        Pagina pag = new Pagina();
+        pag.setTitulo(dadosRef.getTitulo());
+        
+        ArrayList<Pagina> a = controlPages.getPaginas();
+        int aux = a.indexOf(pag);
+        
+        pag = a.get(aux);
+        
+        pag.incrementVezesAcessada();
+        
+        File arquivo = controlPages.getArquivo(pag.getTitulo());
         try {
             Scanner leitor = new Scanner(arquivo);
-            System.out.println(p.getTitulo() + ": \n");
+            System.out.println(dadosRef.getTitulo() + ": \n");
             while (leitor.hasNext()) {
                 String linha = leitor.nextLine();
                 System.out.println(linha);
@@ -216,88 +249,7 @@ public class ConsoleView {
             System.out.println(ex);
         }
     }
-
-    private static void barra(int tamanho, boolean pulaLinha) {
-        System.out.print("+");
-        for (int i = 0; i < tamanho; i++) {
-            System.out.print("=");
-        }
-        if (pulaLinha) {
-            System.out.println("+");
-        } else {
-            System.out.print("+");
-        }
-    }
-
-    private static void textoSimples(int tamanho, String texto, boolean centralizar, boolean pulaLinha) {
-        int tamanhoDaBarra = tamanho - texto.length();
-        int espacosDaEsquerda, espacosDaDireita;
-        espacosDaEsquerda = centralizar ? tamanhoDaBarra / 2 : 1;
-        espacosDaDireita = tamanhoDaBarra - espacosDaEsquerda;
-        fazTraco(espacosDaEsquerda, ' ', true, false);
-        System.out.print(texto);
-        fazTraco(espacosDaDireita, ' ', false, pulaLinha);
-    }
-
-    private static void separador(int tamanho, boolean comTraco) {
-        char lateral = '|', meio = ' ';
-        if (comTraco == true) {
-            lateral = '+';
-            meio = '=';
-        }
-        System.out.print(lateral);
-        fazTraco(tamanho, meio, false, false);
-        System.out.println(lateral);
-    }
-
-    private static void novoItem(int tamanho, String item, String pesoDoItem, boolean pulaLinha) {
-
-        int qtdDeTracos = ((tamanho - item.length()) - (pesoDoItem.length() + 4));
-        if (pesoDoItem.length() == 1) {
-            qtdDeTracos--;
-        }
-        System.out.print("| " + item);
-        fazTraco(qtdDeTracos, '.', false, false);
-        pesoDoItem = (pesoDoItem.length() >= 2) ? "(" + pesoDoItem + ")" : "(0" + pesoDoItem + ")";
-        System.out.print(pesoDoItem);
-        if (pulaLinha) {
-            System.out.println(" |");
-        } else {
-            System.out.print(" |");
-        }
-
-    }
-
-    private static void mensagem(int tamanho, String mensagem, boolean poemEscolha) {
-        barra(tamanho, true);
-        textoSimples(tamanho, mensagem, true, true);
-        if (poemEscolha) {
-            textoDuplo(tamanho, "Sim__(01)", true, "Não__(02)", true);
-        }
-        barra(tamanho, true);
-
-    }
-
-    private static String fazTraco(int tamanho, char estilo, boolean bordaE, boolean bordaD) {
-        String s = "";
-        if (bordaE) {
-            System.out.print("|");
-        }
-        for (int i = 0; i < tamanho; i++) {
-            System.out.print(estilo);
-            s += estilo;
-        }
-        if (bordaD) {
-            System.out.println("|");
-        }
-        return s;
-    }
-
-    private static void textoDuplo(int tamanho, String txt1, boolean cTxt1, String txt2, boolean cTxt2) {
-        textoSimples(tamanho / 2 - 1, txt1, cTxt1, false);
-        textoSimples(tamanho / 2, txt2, cTxt2, true);
-    }
-
+    
     private static int lerInt(boolean limite, int min, int max) {
         int valor;
         boolean repetir;
