@@ -51,8 +51,6 @@ public class GerenciadorDePaginas {
             }
         }
         
-        mergeSort.sort(paginas);
-
         for (int i = 0; i < paginas.size(); i++) {  // Pega os arquivos editados
             File arq = getArquivo(paginas.get(i).getTitulo());
             //System.out.println(paginas.get(i).getTitulo() + " " + "ARQUIVO PRESENTE!!");
@@ -67,6 +65,7 @@ public class GerenciadorDePaginas {
         aComparar = files.passarArqParaPaginas(aComparar, files.obterRepositorio());
 
         
+        mergeSort.sort(paginas);
         mergeSort.sort(aComparar);
 
         if (paginas.size() < aComparar.size()) {

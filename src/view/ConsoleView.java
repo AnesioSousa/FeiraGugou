@@ -221,10 +221,7 @@ public class ConsoleView {
         System.out.print("> ");
     }
 
-    // Pra quando o usuário pedir pra abrir algum
     private static void exibirArquivo(int i, ArrayList<Dados> results) {
-        // RECEBE UMA LISTA DE "Dados" MAS O QUE EU TENHO QUE INCREMENTAR É "Pagina". :/
-        // VER SE DÁ PRA REDUZIR ISSO DEPOIS
         Dados dadosRef = results.get(i);
         Pagina pag = new Pagina();
         pag.setTitulo(dadosRef.getTitulo());

@@ -174,15 +174,14 @@ public class GerenciadorDePesquisa {
         return lista;
     }
 
-    public List topKMaisPalavra(int qtd) {  // Fazer pra palavra e pra página // FAZER EXCEÇÃO DE QUE SE O USUÁRIO QUISER UM TOP (TAMANHO) MAIOR DO QUE O NÚMERO DE ELEMENTOS.
+    public List topKMaisPalavra(int qtd) {
         mergeSort.sort(infoPalavras);
         List<Dados>  aux = infoPalavras.subList(0, qtd);
         return aux;
     }
 
-    // REVER E TESTAR ISSO.
-    public List topKMenosPalavra(int qtd) {// TA ERRRAAADOOO!!! VERIFICAR DEPOIS
-        Comparator<Dados> comp = new Comparator<Dados>(){
+    public List topKMenosPalavra(int qtd) {
+        Comparator<Dados> comp = new Comparator<Dados>() {
             @Override
             public int compare(Dados o1, Dados o2) {
                 if (o1.getQuantidade() > o2.getQuantidade()) {
@@ -200,7 +199,6 @@ public class GerenciadorDePesquisa {
         return aux;
     }
     
-    // REVER E TESTAR ISSO.
     private void atualizarTopKPalavras(Palavra word) {
         Dados p = new Dados();
         p.setTitulo(word.getChave());
