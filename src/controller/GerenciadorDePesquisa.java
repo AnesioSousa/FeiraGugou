@@ -20,16 +20,14 @@ public class GerenciadorDePesquisa {
 
     private MergeSort mergeSort;
     private ArrayList<Dados> infoPalavras;
-    private ArvoreAVL tree;
-    private GerenciadorDePaginas ctrl;
+    private GerenciadorDePaginas controlPages;
     /**
      * Construtor da classe GerenciadorDePesquisa, nele são inicializados os atributos da classe.
      */
     public GerenciadorDePesquisa() {
         this.mergeSort = new MergeSort();
         this.infoPalavras = new ArrayList<>();
-        this.tree = new ArvoreAVL();
-        this.ctrl = new GerenciadorDePaginas();
+        this.controlPages = new GerenciadorDePaginas();
     }
     /**
      * Recebe uma palavra a ser pesquisada e retorna uma lista de paginas na qual tal palavra incide.
@@ -39,16 +37,16 @@ public class GerenciadorDePesquisa {
     public ArrayList pesquisar(String palavra) {
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
 
-        //prePesquisa();
+        prePesquisa();
         Palavra word = new Palavra(palavra);
-        Palavra verificador = tree.encontrar(word);        // Ele já entra aqui com o repositório atualizado.
+        Palavra verificador = controlPages.getControlTree().getTree().encontrar(word);        // Ele já entra aqui com o repositório atualizado.
 
         if (verificador == null) {
-            verificador = atualizarPalavra(word, ctrl.getPaginas());    //REVER ISSSOOO!!!!!!// Isso só ocorre quando é uma palavra nova.
+            verificador = atualizarPalavra(word, controlPages.getPaginas());    //REVER ISSSOOO!!!!!!// Isso só ocorre quando é uma palavra nova.
             if (verificador.getListaDados().isEmpty()) {      
                 return word.getListaDados();
             }
-            tree.inserir(word);
+            controlPages.getControlTree().getTree().inserir(word);
         }
         verificador.incrementVezesBuscada();
         atualizarTopKPalavras(verificador);
@@ -56,14 +54,25 @@ public class GerenciadorDePesquisa {
         
         return verificador.getListaDados();
     }
-
+    
+    /**
+     * Método auxiliar que verifica a integridade dos arquivos antes de fazer uma busca.
+     */
+    private void prePesquisa() { 
+        if (controlPages.identificarAlteracoes()) {
+            controlPages.atualizarPaginas();
+            atualizarArvore(controlPages.getAdicionadas(), controlPages.getEditadas(), controlPages.getRemovidas()); 
+            controlPages.limparMarcadores();
+        }
+    }
+    
     private void atualizarArvore(ArrayList<Pagina> adicionadas, ArrayList<Pagina> alteradas, ArrayList<Pagina> removidas) {
         // DE UMA SÓ VEZ:
         // percorrer a lista de modificados verificando se a Palavra incide em alguma página modificada ou nova e à atualizar.
         // percorrer a lista de removidos verificando se a Palavra tem alguma página que foi removida e tirar. (provavelemte seja a ultima coisa a fazer)
 
         ArrayList<Palavra> palavrasParaRemover = new ArrayList<>();
-        Iterator<Palavra> itr = tree.iterator();
+        Iterator<Palavra> itr = controlPages.getControlTree().getTree().iterator();
 
         while (itr.hasNext()) { //Percorre as Palavras da árvore tirando da lista de páginas delas as páginas removidas do repositório. 
             Palavra n = itr.next();
@@ -86,7 +95,7 @@ public class GerenciadorDePesquisa {
             }
         }
         for (Palavra p : palavrasParaRemover) { // E ENTÃO REMOVIDA!
-            tree.remover(p);
+            controlPages.getControlTree().getTree().remover(p);
         }
     }
     
@@ -104,7 +113,7 @@ public class GerenciadorDePesquisa {
         for (Pagina pagina : pages) {
 
             int cont = 0;
-            File arquivo = ctrl.getArquivo(pagina.getTitulo());   // REVER O USO DO CONTROLADOR AQUI. 
+            File arquivo = controlPages.getArquivo(pagina.getTitulo());   // REVER O USO DO CONTROLADOR AQUI. 
             try {
                 Scanner input = new Scanner(arquivo);
                 while (input.hasNext()) {
@@ -237,6 +246,14 @@ public class GerenciadorDePesquisa {
         }
     }
 
+    /**
+     * Retorna o controlador de páginas.
+     * @return controlador de páginas.
+     */
+    public GerenciadorDePaginas getControlPages() {
+        return controlPages;
+    }
+    
     /**
      * Retorna uma lista auxiliar que armazena os elementos pesquisados para fins de ranking.
      * @return lista de elementos.

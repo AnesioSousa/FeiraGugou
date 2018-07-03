@@ -16,7 +16,7 @@ import model.Pagina;
 public class ConsoleView {
 
     private static GerenciadorDePesquisa controlSearch = new GerenciadorDePesquisa();
-    private static GerenciadorDePaginas controlPages = new GerenciadorDePaginas();
+    //private static GerenciadorDePaginas controlPages = new GerenciadorDePaginas();
     static Scanner input = new Scanner(System.in);
 
     /**
@@ -105,28 +105,28 @@ public class ConsoleView {
                                 switch(pos){
                                     case 1: 
                                         List<Dados> a;
-                                        if(!controlPages.paginasTemAcessos()){
+                                        if(!controlSearch.getControlPages().paginasTemAcessos()){
                                             System.out.println("Nenhuma página foi acessada !!");
                                             System.out.println("Insira qualquer letra ou número para continuar!");
                                             input.next();
                                         }else{
                                             System.out.println("Até quantas páginas deseja visualizar?");
-                                            pos = lerInt(true, 1, controlPages.getPaginas().size()); // Não deixa escolher uma quantidade de palavras além da quantidade de elementos na árvore
-                                            a = controlPages.topKMaisPagina(pos);
+                                            pos = lerInt(true, 1, controlSearch.getControlPages().getPaginas().size()); // Não deixa escolher uma quantidade de palavras além da quantidade de elementos na árvore
+                                            a = controlSearch.getControlPages().topKMaisPagina(pos);
                                             for (int i = 0; i < pos; i++) {
                                                 System.out.println(a.get(i));
                                             }
                                         }
                                     break;
                                     case 2: 
-                                        if(!controlPages.paginasTemAcessos()){
+                                        if(!controlSearch.getControlPages().paginasTemAcessos()){
                                             System.out.println("Nenhuma página foi acessada !!");
                                             System.out.println("Insira qualquer letra ou número para continuar!");
                                             input.next();
                                         }else{
                                             System.out.println("Até quantas páginas deseja visualizar?");
-                                            pos = lerInt(true, 1, controlPages.getPaginas().size()); // Não deixa escolher uma quantidade de palavras além da quantidade de elementos na árvore
-                                            a = controlPages.topKMenosPagina(pos);
+                                            pos = lerInt(true, 1, controlSearch.getControlPages().getPaginas().size()); // Não deixa escolher uma quantidade de palavras além da quantidade de elementos na árvore
+                                            a = controlSearch.getControlPages().topKMenosPagina(pos);
                                             for (int i = 0; i < pos; i++) {
                                                 System.out.println(a.get(i));
                                             }
@@ -230,14 +230,14 @@ public class ConsoleView {
         Pagina pag = new Pagina();
         pag.setTitulo(dadosRef.getTitulo());
         
-        ArrayList<Pagina> a = controlPages.getPaginas();
+        ArrayList<Pagina> a = controlSearch.getControlPages().getPaginas();
         int aux = a.indexOf(pag);
         
         pag = a.get(aux);
         
         pag.incrementVezesAcessada();
         
-        File arquivo = controlPages.getArquivo(pag.getTitulo());
+        File arquivo = controlSearch.getControlPages().getArquivo(pag.getTitulo());
         try {
             Scanner leitor = new Scanner(arquivo);
             System.out.println(dadosRef.getTitulo() + ": \n");
