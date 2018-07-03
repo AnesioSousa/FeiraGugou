@@ -9,7 +9,6 @@ public class Pagina implements Comparable<Pagina>{
     private String titulo;
     private int vezesAcessada;
     private long info;
-    //private boolean modified;
 
     /**
      * Retorna o título desta página.
@@ -46,19 +45,6 @@ public class Pagina implements Comparable<Pagina>{
      * @param info long contendo o valor.
      */
     public void setInfo(long info) {this.info = info;}
-
-    /**
-     * Retorna a informação de se esta pagina foi ou não modificada.
-     * @return variável boolean contendo a informação.
-     */
-    //public boolean isModified() {return modified;}
-
-    /**
-     * Dita se esta página foi modificada ou não.
-     * @param modified boolean contendo a informação.
-     */
-    //public void setModified(boolean modified) {this.modified = modified;}
-    
 
     @Override
     public boolean equals(Object obj) {

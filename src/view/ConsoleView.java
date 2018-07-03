@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import model.Dados;
 
@@ -18,93 +19,133 @@ public class ConsoleView {
     private static GerenciadorDePaginas controlPages = new GerenciadorDePaginas();
     static Scanner input = new Scanner(System.in);
 
-    public static void main(String[] args) throws IOException {  ////////////////////// TRATAAARRR EXCEÇÃO
-        final int TAMANHO_MENU = 80;
+    public static void main(String[] args) {
+        ArrayList resultados;
+        boolean repetirMenuPrincipal = false;
         int opcao = 0;
         int choice = 0;
         int escolha = 0;
         int pos = 0;
 
         do {
-            menuPrincipal(TAMANHO_MENU);
-            opcao = Console.readInt();
+            exibirMenuPrincipal();
+            opcao = lerInt(true, 0, 2);
             switch (opcao) {
                 case 1:
-                    String palavra = obterPalavra();
-                    ArrayList ret = controlSearch.pesquisar(palavra);
+                    resultados = pesquisa();
                     do {
-                        exibirResultados(ret);                                                               // <<<<<<<<<<<<<<                
-                        choice = subMenu3(TAMANHO_MENU);
+                        exibirResultados(resultados);                                                               // <<<<<<<<<<<<<<                
+                        exibirMenuResultados();
+                        choice = lerInt(true, 0, 3);
                         switch (choice) {
                             case 1:
-                                //if(!controlPages.arqIsModified()){     // TA COM BOOO, VERIFICAR ISSO DEPOIS  TEM QUE REVERRRRR-> 
-                                pos = subMenu4();
-                                exibirArquivo(pos - 1, ret);
-                                //}else{
-                                //System.out.println("ARQUIVOS FORAM ALTERADOS, A BASE DE DADOS E A LISTA DE RESULTADOS AGORA SERÃO ATUALIZADOS!!");
-                                //ret = control.pesquisar(palavra);// Posso fazer isso não, vai acabar incrementando o contador de palavra.
-                                //}
-                                break;
+                                System.out.println("Digite o número da página:");
+                                pos = lerInt(true, 0, resultados.size());
+                                System.out.println();
+                                exibirArquivo(pos - 1, resultados);
+                            break;
                             case 2:
-                                controlSearch.inverterResultados(ret);
-                                break;
+                                controlSearch.inverterResultados(resultados);
+                            break;
+                            case 3:
+                                resultados = pesquisa();
+                            break;
                         }
-                        System.out.println("Tecle ENTER para continuar...");
-                        Console.readChar();
-                    } while (choice != 3);
-                    break;
+                    } while (choice != 0);
+                break;
                 case 2:
-                    choice = subMenu2(TAMANHO_MENU);
-                    switch (choice) {
-                        case 1:
-                            escolha = subMenu5(TAMANHO_MENU);
-                            switch (escolha) {
-                                case 1:
-                                    // TOP-K PALAVRAS MAIS PESQUISADAS
-                                    pos = subMenu4();
-                                    for (int i = 0; i < pos; i++) {
-                                        System.out.println(controlSearch.topKMaisPalavra(pos).get(i));
-                                    }
-                                    System.out.println("Tecle ENTER para continuar...");
-                                    Console.readChar();
+                    exibirMenuTopK();
+                    choice = lerInt(true, 0, 2);
+                    switch (choice) {             // Escolha entre Top-K Palavras ou Páginas
+                        case 1: // SE ESCOLHER PALAVRA:
+                            do{
+                                exibirMenuTopKPalavras();
+                                pos = lerInt(true, 0, 2);
+                                switch(pos){ // ESCOLHA DE MAIOR PALAVRA E MENOR PALAVRA!
+                                    case 1:
+                                        List<Dados> a;
+                                        if(controlSearch.getInfoPalavras().isEmpty()){
+                                            System.out.println("Nenhuma palavra ainda foi buscada!");
+                                            System.out.println("Insira qualquer letra ou número para continuar!");
+                                            input.next();
+                                        }else{
+                                            System.out.println("Até quantas palavras deseja visualizar?");
+                                            pos = lerInt(true, 1, controlSearch.getInfoPalavras().size()); // Não deixa escolher uma quantidade de palavras além da quantidade de elementos na árvore
+                                            a = controlSearch.topKMaisPalavra(pos);
+                                            for (int i = 0; i < pos; i++) {
+                                                System.out.println(a.get(i));
+                                            }
+                                        }
                                     break;
-                                case 2:
-                                    // TOP-K PALAVRAS MENOS PESQUISADAS
-                                    pos = subMenu4();
-                                    for (int i = 0; i < pos; i++) {
-                                        System.out.println(controlSearch.topKMenosPalavra(pos).get(i));
-                                    }
-                                    System.out.println("Tecle ENTER para continuar...");
-                                    Console.readChar();
+                                    case 2:
+                                        if(controlSearch.getInfoPalavras().isEmpty()){
+                                            System.out.println("Nenhuma palavra ainda foi buscada!");
+                                            System.out.println("Insira qualquer letra ou número para continuar!");
+                                            input.next();
+                                        }else{
+                                            System.out.println("Até quantas palavras deseja visualizar?");
+                                            pos = lerInt(true, 1, controlSearch.getInfoPalavras().size()); // Não deixa escolher uma quantidade de palavras além da quantidade de elementos na árvore
+                                            a = controlSearch.topKMenosPalavra(pos);
+                                            for (int i = 0; i < pos; i++) {
+                                                System.out.println(a.get(i));
+                                            }
+                                        }
                                     break;
-                            }
-                            break;
-
-                        case 2:
-                            escolha = subMenu6(TAMANHO_MENU);
-                            switch (escolha) {
-                                case 1:
-                                    // TOP-K PÁGINAS MAIS VISITADAS
-                                    pos = subMenu4();
-                                    //
-                                    break;
-                                case 2:
-                                    // TOP-K PÁGINAS MENOS VISITADAS
-                                    pos = subMenu4();
-                                    //
-                                    break;
-                            }
-                            break;
-
-                        case 0:
-                            break;
+                                }
+                            }while(pos != 0);    
+                        break;
+                        case 2: // SE ESCOLHER PAGINA:
+                            
+                        break;
                     }
-                    break;
-            }
+                break;
 
+            }
         } while (opcao != 0);
     }
-
+  
+    private static void exibirMenuPrincipal() {
+        System.out.println("+============================================================================+");
+        System.out.println("|                               FeiraGugou                                   |");
+        System.out.println("+============================================================================+");
+        System.out.println("| Realizar Busca........................................................(01) |");
+        System.out.println("| Top-K.................................................................(02) |");
+        System.out.println("+============================================================================+");
+        System.out.println("| Sair..................................................................(00) |");
+        System.out.println("+============================================================================+");
+        System.out.print("> ");
+    }
+    
+    private static ArrayList pesquisa(){
+        String palavra = obterPalavra();
+        ArrayList aux = controlSearch.pesquisar(palavra);
+        
+        return aux;
+    }
+    
+    private static void exibirMenuTopK(){ 
+        System.out.println("+============================================================================+");
+        System.out.println("|                                 TOP-K                                      |");
+        System.out.println("+============================================================================+");
+        System.out.println("| Palavras..............................................................(01) |");
+        System.out.println("| Paginas...............................................................(02) |");
+        System.out.println("+============================================================================+");
+        System.out.println("| Sair..................................................................(00) |");
+        System.out.println("+============================================================================+");
+        System.out.print("> ");
+    }
+    
+    private static void exibirMenuResultados(){
+        System.out.println("+============================================================================+");
+        System.out.println("| Abrir página..........................................................(01) |");
+        System.out.println("| Alterar ordem dos resultados..........................................(02) |");
+        System.out.println("| Realizar outra busca..................................................(03) |");
+        System.out.println("+============================================================================+");
+        System.out.println("| Voltar ao menu principal..............................................(00) |");
+        System.out.println("+============================================================================+");
+        System.out.print("> ");
+    }
+    
     private static String obterPalavra() {
         System.out.printf("Digite a palavra: ");
         String palavra = input.nextLine();
@@ -121,40 +162,21 @@ public class ConsoleView {
             }
         }
     }
-
-    private static int subMenu2(int tamanho) throws IOException { ////////////////////// TRATAAARRR EXCEÇÃO
+    
+    private static void exibirMenuTopKPalavras(){
         int opcao = 0;
-        barra(tamanho, true);
-        textoSimples(tamanho, "Top-k", true, true);
-        separador(tamanho, true);
-        novoItem(tamanho, "Palavras", "1", true);
-        novoItem(tamanho, "Paginas", "2", true);
-        separador(tamanho, true);
-        novoItem(tamanho, "Sair", "0", true);
-        barra(tamanho, true);
-
-        opcao = Console.readInt();
-
-        return opcao;
+        System.out.println("+============================================================================+");
+        System.out.println("|                             TOP-K PALAVRAS                                 |");
+        System.out.println("+============================================================================+");
+        System.out.println("| Mais buscadas.........................................................(01) |");
+        System.out.println("| Menos buscadas........................................................(02) |");
+        System.out.println("+============================================================================+");
+        System.out.println("| Voltar................................................................(00) |");
+        System.out.println("+============================================================================+");
+        System.out.print("> ");
     }
 
-    private static int subMenu5(int tamanho) throws IOException {
-        int opcao = 0;
-        barra(tamanho, true);
-        textoSimples(tamanho, "Top-k", true, true);
-        separador(tamanho, true);
-        novoItem(tamanho, "Mais buscadas", "1", true);
-        novoItem(tamanho, "Menos buscadas", "2", true);
-        separador(tamanho, true);
-        novoItem(tamanho, "Sair", "0", true);
-        barra(tamanho, true);
-
-        opcao = Console.readInt();
-
-        return opcao;
-    }
-
-    private static int subMenu6(int tamanho) throws IOException {
+    private static int topKPaginas(int tamanho) throws IOException {
         int opcao = 0;
         barra(tamanho, true);
         textoSimples(tamanho, "Top-k", true, true);
@@ -170,21 +192,9 @@ public class ConsoleView {
         return opcao;
     }
 
-    private static int subMenu3(int tamanho) throws IOException {  ////////////////////// TRATAAARRR EXCEÇÃO
+    private static int obterNumero() throws IOException {   ////////////////////// TRATAAARRR EXCEÇÃO
         int opcao = 0;
-        barra(tamanho, true);
-        novoItem(tamanho, "Abrir página", "1", true);
-        novoItem(tamanho, "Alterar ordem", "2", true);
-        novoItem(tamanho, "Realizar outra busca", "3", true);
-        barra(tamanho, true);
-        opcao = Console.readInt();
-
-        return opcao;
-    }
-
-    private static int subMenu4() throws IOException {   ////////////////////// TRATAAARRR EXCEÇÃO
-        int opcao = 0;
-        System.out.print("Digite o número: ");
+        System.out.print("Digite um número valido: ");
         opcao = Console.readInt();
 
         return opcao;
@@ -196,7 +206,7 @@ public class ConsoleView {
         File arquivo = controlPages.getPagina(p.getTitulo());
         try {
             Scanner leitor = new Scanner(arquivo);
-            System.out.println("Conteúdo da página: " + p.getTitulo() + "\n");
+            System.out.println(p.getTitulo() + ": \n");
             while (leitor.hasNext()) {
                 String linha = leitor.nextLine();
                 System.out.println(linha);
@@ -205,17 +215,6 @@ public class ConsoleView {
         } catch (FileNotFoundException ex) {
             System.out.println(ex);
         }
-    }
-
-    private static void menuPrincipal(int tamanho) {
-        barra(tamanho, true);
-        textoSimples(tamanho, "FeiraGugou", true, true);
-        separador(tamanho, true);
-        novoItem(tamanho, "Realizar Busca", "1", true);
-        novoItem(tamanho, "Top-K", "2", true);
-        separador(tamanho, true);
-        novoItem(tamanho, "Sair", "0", true);
-        barra(tamanho, true);
     }
 
     private static void barra(int tamanho, boolean pulaLinha) {
@@ -300,7 +299,6 @@ public class ConsoleView {
     }
 
     private static int lerInt(boolean limite, int min, int max) {
-        Scanner input = new Scanner(System.in);
         int valor;
         boolean repetir;
         do {
@@ -313,7 +311,7 @@ public class ConsoleView {
                     if (valor >= min && valor <= max) {
                         return valor;
                     } else {
-                        System.out.print("Digite um valor entre: " + min + " e " + max + ": ");
+                        System.out.println("Digite um valor entre: " + min + " e " + max + ": ");
                         repetir = true;
                     }
                 } else {

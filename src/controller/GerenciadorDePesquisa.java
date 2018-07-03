@@ -143,7 +143,7 @@ public class GerenciadorDePesquisa {
         }
         return word;
     }
-
+    
     private boolean verificarMultiPalavras(String palavra) {
         Pattern padrao = Pattern.compile("\\s+[A-Za-z]+");
         Matcher verificador = padrao.matcher(palavra);
@@ -175,31 +175,47 @@ public class GerenciadorDePesquisa {
     }
 
     public List topKMaisPalavra(int qtd) {  // Fazer pra palavra e pra página // FAZER EXCEÇÃO DE QUE SE O USUÁRIO QUISER UM TOP (TAMANHO) MAIOR DO QUE O NÚMERO DE ELEMENTOS.
+        mergeSort.sort(infoPalavras);
         List<Dados>  aux = infoPalavras.subList(0, qtd);
         return aux;
     }
 
     // REVER E TESTAR ISSO.
     public List topKMenosPalavra(int qtd) {// TA ERRRAAADOOO!!! VERIFICAR DEPOIS
-        List<Dados> aux = infoPalavras.subList(infoPalavras.size()-1, qtd);
+        Comparator<Dados> comp = new Comparator<Dados>(){
+            @Override
+            public int compare(Dados o1, Dados o2) {
+                if (o1.getQuantidade() > o2.getQuantidade()) {
+                    return 1;
+                }
+                if (o1.getQuantidade() < o2.getQuantidade()) {
+                    return -1;
+                }
+                
+                return 0;
+            }
+        };
+        mergeSort.sort(infoPalavras, comp);
+        List<Dados> aux = infoPalavras.subList(0, qtd);        
         return aux;
     }
     
     // REVER E TESTAR ISSO.
-    private void atualizarTopKPalavras(Palavra word) {  // TEM QUE BOTAR CONDIÇÃO DE QUE SE A PALAVRA JÁ ESTIVER NA LISTA SÓ MUDAR A QUANTIDADE.
+    private void atualizarTopKPalavras(Palavra word) {
         Dados p = new Dados();
         p.setTitulo(word.getChave());
         
         int aux = infoPalavras.indexOf(p);
         
         if(aux != -1){
-           infoPalavras.get(aux).setQuantidade(word.getVezesBuscada()); // ver isso aqui depois
+           infoPalavras.get(aux).setQuantidade(word.getVezesBuscada());
         }else{
            p.setQuantidade(word.getVezesBuscada());
            infoPalavras.add(p);
         }
-
-        mergeSort.sort(infoPalavras);
     }
 
+    public ArrayList<Dados> getInfoPalavras() {
+        return infoPalavras;
+    }
 }
