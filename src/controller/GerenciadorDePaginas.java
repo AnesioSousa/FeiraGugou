@@ -9,7 +9,7 @@ import util.Arquivos;
 import util.MergeSort;
 
 /**
- *
+ * Classe responsável por gerar objetos capazes de gerenciar páginas, que são arquivos txt no HD.
  * @author Anésio Sousa
  */
 public class GerenciadorDePaginas {
@@ -20,6 +20,12 @@ public class GerenciadorDePaginas {
     private ArrayList<Pagina> editadas;
     private ArrayList<Pagina> removidas;
 
+    /**
+     * Contrutor da classe GerenciadorDePaginas, nele são inicializados os atributos da classe.
+     * Cada vez que um gerenciador de páginas é instanciado, a lista de páginas que ele gerencia 
+     * já é preenchida. Esse preenchimento é feito pegando todos os arquivos de um determinado diretório
+     * e passando para uma lista de Páginas.
+     */
     public GerenciadorDePaginas() {
         this.mergeSort = new MergeSort();
         this.files = new Arquivos();
@@ -29,8 +35,10 @@ public class GerenciadorDePaginas {
         this.editadas = new ArrayList<>();
         this.removidas = new ArrayList<>();
     }
-    
-    private void prePesquisa() { // ACHO QUE ISSO AQUI VAI É PRO CONTROLLER MASTER
+    /**
+     * Método auxiliar que junta os métodos de verificação de integridade em um só.
+     */
+    private void verificarECorrigirMudancas() { // ACHO QUE ISSO AQUI VAI É PRO CONTROLLER MASTER
         if (identificarAlteracoes()) {
             atualizarPaginas();
             //atualizarArvore(adicionadas, editadas, removidas); // REVER ISSO!!!. 
@@ -108,6 +116,10 @@ public class GerenciadorDePaginas {
         removidas.clear();
     }
     
+    /**
+     *
+     * @return
+     */
     public boolean arqIsModified() {  // TESTAR ISSO!
         
         //limparMarcadores();
@@ -120,6 +132,11 @@ public class GerenciadorDePaginas {
         return a;
     }
     
+    /**
+     *
+     * @param titulo
+     * @return
+     */
     public File getArquivo(String titulo) {
         ArrayList<File> arq = files.obterRepositorio();
         for (File arquivo : arq) {
@@ -130,12 +147,22 @@ public class GerenciadorDePaginas {
         return null;
     }
 
+    /**
+     *
+     * @param qtd
+     * @return
+     */
     public List topKMaisPagina(int qtd){
         mergeSort.sort(paginas);
         List<Pagina> aux = paginas.subList(0, qtd);          
         return aux;
     }
     
+    /**
+     *
+     * @param qtd
+     * @return
+     */
     public List topKMenosPagina(int qtd){
         Comparator<Pagina> comp = new Comparator<Pagina>(){
             @Override
@@ -157,6 +184,10 @@ public class GerenciadorDePaginas {
         return aux;
     }
     
+    /**
+     *
+     * @return
+     */
     public boolean paginasTemAcessos(){
         for(Pagina pag: paginas){
             if(pag.getVezesAcessada() != 0){
@@ -166,6 +197,10 @@ public class GerenciadorDePaginas {
         return false;
     }
     
+    /**
+     *
+     * @return
+     */
     public ArrayList getPaginas() {
         return paginas;
     }
