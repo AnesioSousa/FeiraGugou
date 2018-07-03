@@ -10,7 +10,7 @@ import model.Dados;
 import model.Pagina;
 
 /**
- *
+ * Classe responsável por ser a interface gráfica do sistema.
  * @author Anésio Sousa
  */
 public class ConsoleView {
@@ -19,6 +19,10 @@ public class ConsoleView {
     private static GerenciadorDePaginas controlPages = new GerenciadorDePaginas();
     static Scanner input = new Scanner(System.in);
 
+    /**
+     * Método principal da classe ConsoleView
+     * @param args array que recebe dados da command line. 
+     */
     public static void main(String[] args) {
         ArrayList resultados;
         int opcao = 0;
@@ -32,7 +36,7 @@ public class ConsoleView {
                 case 1:
                     resultados = pesquisa();
                     do {
-                        exibirResultados(resultados);                                                               // <<<<<<<<<<<<<<                
+                        exibirResultados(resultados);                                                                         
                         exibirMenuResultados();
                         choice = lerInt(true, 0, 3);
                         switch (choice) {

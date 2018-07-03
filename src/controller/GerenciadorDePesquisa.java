@@ -13,7 +13,7 @@ import model.*;
 import util.*;
 
 /**
- *
+ * Classe responsável por gerar objetos capazes de gerenciar as pesquisas do software.
  * @author Anésio Sousa
  */
 public class GerenciadorDePesquisa {
@@ -22,38 +22,38 @@ public class GerenciadorDePesquisa {
     private ArrayList<Dados> infoPalavras;
     private ArvoreAVL tree;
     private GerenciadorDePaginas ctrl;
-
+    /**
+     * Construtor da classe GerenciadorDePesquisa, nele são inicializados os atributos da classe.
+     */
     public GerenciadorDePesquisa() {
         this.mergeSort = new MergeSort();
         this.infoPalavras = new ArrayList<>();
         this.tree = new ArvoreAVL();
         this.ctrl = new GerenciadorDePaginas();
     }
-
-    public ArrayList pesquisar(String palavra/*, boolean invertido*/) { // REVER ISSO DEPOIS!!!
+    /**
+     * Recebe uma palavra a ser pesquisada e retorna uma lista de paginas na qual tal palavra incide.
+     * @param palavra palavra a ser pesquisada.
+     * @return lista contendo resultados
+     */
+    public ArrayList pesquisar(String palavra) {
         ///TODA VEZ ANTES DE PESQUISAR, SERÁ NECESSÁRIO VERIFICAR A INTEGRIDADE DOS ARQUIVOS. SE ELES SOFRERAM ALTERAÇÕES, ELES DEVERÃO SER RE-LIDOS, E OS NÓS ATUALIZADOS.
 
         //prePesquisa();
         Palavra word = new Palavra(palavra);
         Palavra verificador = tree.encontrar(word);        // Ele já entra aqui com o repositório atualizado.
 
-        if (verificador == null) {                     // Ver depois se não dá pra já usar "word" invés desse "verificador"
+        if (verificador == null) {
             verificador = atualizarPalavra(word, ctrl.getPaginas());    //REVER ISSSOOO!!!!!!// Isso só ocorre quando é uma palavra nova.
-            if (verificador.getListaDados().isEmpty()) {      // VAI PRECISAR REMOVER O NO?
+            if (verificador.getListaDados().isEmpty()) {      
                 return word.getListaDados();
             }
             tree.inserir(word);
         }
         verificador.incrementVezesBuscada();
-
         atualizarTopKPalavras(verificador);
-
-        /*if(invertido){
-            inverter(ret.getListaDados());
-        }else{
-            mergeSort.sort(ret.getListaDados());
-        }*/
         mergeSort.sort(verificador.getListaDados());
+        
         return verificador.getListaDados();
     }
 
@@ -89,8 +89,17 @@ public class GerenciadorDePesquisa {
             tree.remover(p);
         }
     }
-    // ESSE MÉTODO RECEBE UMA PALAVRA E UMA LISTA DE PAGINAS, DAI ELE ATUALIZA A LISTA DE PÁGINAS DA PALAVRA COM USANDO A LISTA RECEBIDA.
-
+    
+    /**
+     * Recebe um objeto Palavra e uma lista de Páginas.
+     * Esse método percorre toda a lista de páginas recebidas, procurando ocorrencias
+     * dessa palavra. Se achar, insere uma referencia de nomes das páginas e quantas
+     * vezes tal palavra ocorre nessas páginas numa lista de Dados que ficam armazenados
+     * na Palavra.
+     * @param word Palavra a ser verificada
+     * @param pages lista de palavras que vai ser percorrida.
+     * @return palavra com os dados verificados.
+     */
     private Palavra atualizarPalavra(Palavra word, ArrayList<Pagina> pages) {
         for (Pagina pagina : pages) {
 
@@ -100,25 +109,18 @@ public class GerenciadorDePesquisa {
                 Scanner input = new Scanner(arquivo);
                 while (input.hasNext()) {
                     String linha = input.nextLine();
-
                     String aux = prepararLinha(linha);
-
                     StringTokenizer tkn = new StringTokenizer(aux);
 
                     while (tkn.hasMoreTokens()) {
                         String cmp = tkn.nextToken();
-
                         if (cmp.equalsIgnoreCase(word.getChave())) {
                             cont++;
                         }
-
-                        //System.out.print(cmp+" ");
                     }
-                    //System.out.println();
                 }
                 Dados data = new Dados();
                 data.setTitulo(pagina.getTitulo());
-
                 int pos = word.getListaDados().indexOf(data);
                 if (cont != 0) { // Se tiver pelo menos 1 ocorrência da palavra no arquivo txt
                     if (pos != -1) {
@@ -130,8 +132,8 @@ public class GerenciadorDePesquisa {
                         data.setQuantidade(cont);
                         a.add(data);
                     }
-                } else {                                              // SE O CONTADOR FOR 0 E ESSE NÓ TIVER ESSA ESSA PAGINA EM SEUS DADOS, QUER DIZER QUE ANTES TINHA OCORRENCIAS, MAS DEIXOU DE TER. DEVE REMVER ENTÃO ESSA PÁGINA DA LISTA DE DADOS DESSE NÓ.
-                    if (pos != -1) {
+                } else {                                              // Se o contador for 0 e essa Palavra tiver essa Página em seus dados,
+                    if (pos != -1) {                                  // quer dizer que antes tinha ocorrencias, mas deixou de ter. Então essa Página é removida da lista de dados dessa Palavra.
                         ArrayList<Dados> a = word.getListaDados();
                         a.remove(pos);                               // Remove a Página da lista de Páginas de uma Palavra
                     }
@@ -150,9 +152,13 @@ public class GerenciadorDePesquisa {
 
         return verificador.find();
     }
-
+    /**
+     * "Limpa" uma linha recebida, removendo tudo que não seja letra ou número.
+     * @param str2Clean linha a ser "limpada".
+     * @return string que armazena a string pós limpeza.
+     */
     private String prepararLinha(String str2Clean) {
-        Pattern padrao = Pattern.compile("[\\p{L}0-9]+{1,}"); // ver se dá pra retirar o {1,}
+        Pattern padrao = Pattern.compile("[\\p{L}0-9]+{1,}"); 
         Matcher verificador = padrao.matcher(str2Clean);
         String palavrasPreparadas;
         String a = "";
@@ -167,6 +173,11 @@ public class GerenciadorDePesquisa {
         return a;
     }
 
+    /**
+     * Dada uma lista, inverte seus elementos.
+     * @param lista lista a ser invertida.
+     * @return lista invertida.
+     */
     public ArrayList<Dados> inverterResultados(ArrayList<Dados> lista) {
         for (int i = 0, j = lista.size() - 1; i < j; i++) {
             lista.add(i, lista.remove(j));
@@ -174,12 +185,22 @@ public class GerenciadorDePesquisa {
         return lista;
     }
 
+    /**
+     * Retorna as N palavras mais procuradas.
+     * @param qtd quantidade de palavras a ser exibida.
+     * @return sublista da lista de palavras auxiliar contendo as N palavras.
+     */
     public List topKMaisPalavra(int qtd) {
         mergeSort.sort(infoPalavras);
         List<Dados>  aux = infoPalavras.subList(0, qtd);
         return aux;
     }
 
+    /**
+     * Retorna as N palavras menos procuradas.
+     * @param qtd quantidade de palavras a ser exibida.
+     * @return sublista da lista de palavras auxiliar contendo as N palavras.
+     */
     public List topKMenosPalavra(int qtd) {
         Comparator<Dados> comp = new Comparator<Dados>() {
             @Override
@@ -198,7 +219,10 @@ public class GerenciadorDePesquisa {
         List<Dados> aux = infoPalavras.subList(0, qtd);        
         return aux;
     }
-    
+    /**
+     * Método que atualiza a lista auxiliar que armazena os elementos pesquisados para fins de ranking.
+     * @param word palavra a ser adicionada ou atualizada na lista.
+     */
     private void atualizarTopKPalavras(Palavra word) {
         Dados p = new Dados();
         p.setTitulo(word.getChave());
@@ -213,6 +237,10 @@ public class GerenciadorDePesquisa {
         }
     }
 
+    /**
+     * Retorna uma lista auxiliar que armazena os elementos pesquisados para fins de ranking.
+     * @return lista de elementos.
+     */
     public ArrayList<Dados> getInfoPalavras() {
         return infoPalavras;
     }

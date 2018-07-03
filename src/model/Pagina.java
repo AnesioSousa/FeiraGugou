@@ -30,7 +30,6 @@ public class Pagina implements Comparable<Pagina>{
 
     /**
      * Dita quantas vezes essa página foi acessada.
-     * @param vezesAcessada int com o valor;
      */
     public void incrementVezesAcessada() {this.vezesAcessada++;}
 
